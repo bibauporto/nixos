@@ -2,6 +2,7 @@
 
 {
   services.xserver.enable = true;
+  services.xserver.excludePackages = [ pkgs.xterm ]; # Start clean, no XTerm
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
@@ -23,14 +24,16 @@
 
   environment.systemPackages = with pkgs; [
     # --- The "Normal" GNOME Apps ---
-    nautilus            # File Manager
-    gnome-console       # Modern Terminal
-    gnome-text-editor   # This is the "normal" text editor you are looking for
-    gnome-calculator    # Usually handy to keep
+    nautilus          
+    gnome-console      
+    gnome-text-editor   
+    gnome-calculator    
+    loupe               # Image Viewer
     
     # System Tools
     gnome-tweaks
     gnome-extensions-cli
+    xclip 
     
     # Extensions
     gnomeExtensions.just-perfection    
