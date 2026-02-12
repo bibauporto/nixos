@@ -29,7 +29,6 @@
   };
 
   programs.fuse.userAllowOther = true;
-  programs.ssh.startAgent = true;
 
   # System version
   system.stateVersion = "25.11"; 
