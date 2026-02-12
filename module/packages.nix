@@ -3,6 +3,9 @@
 {
   environment.systemPackages = with pkgs; [
     neovim
+    gcc       # The compiler
+    gnumake   # The build orchestrator
+    unzip     # To unpack Mason/Lazy downloads
 
     # Version Control & Cloud
     git
@@ -36,20 +39,19 @@
     '';
 
     shellAliases = {
-      # Quick nixos commands
       nswitch = "sudo nixos-rebuild switch --flake #lea-pc";
       nbuild = "sudo nixos-rebuild build --flake .";
       ntest = "sudo nixos-rebuild test --flake .";
       nboot = "sudo nixos-rebuild boot --flake .";
 
-      # Adding a few CachyOS-style basics to make the shell feel better
+      
       ls = "ls --color=auto";
       ll = "ls -lh";
     };
   };
 
   users.users.LEA = {
-    isNormalUser = true; # Required for standard user accounts
+    isNormalUser = true; 
     extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" ];
     shell = pkgs.fish;
   };

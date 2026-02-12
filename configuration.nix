@@ -12,7 +12,8 @@
     ./module/kanata.nix
     ./module/rclone.nix
     ./module/network.nix
-    ./module/gc.nix          
+    ./module/gc.nix   
+    ./module/libraries.nix
   ];
 
   # Nix Settings
