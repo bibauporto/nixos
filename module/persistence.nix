@@ -1,0 +1,31 @@
+{ config, pkgs, lib, ... }:
+{
+  environment.persistence."/persist" = {
+    hideMounts = true;
+    directories = [
+      "/var/log"
+      "/var/lib/bluetooth"
+      "/var/lib/nixos"
+      "/etc/NetworkManager/system-connections"
+    ];
+   files = [
+    "/etc/machine-id"
+   ];
+    users.LEA.directories = [
+      "Documents"
+      "Downloads"
+      "OneDrive"
+      ".config"
+      ".pki"
+      ".ssh"
+      ".local/share"
+      
+      ".antigravity"
+      ".gemini"
+      ".bun"
+      ".vscode"
+      
+      ".gnupg"
+    ];
+  };
+}
