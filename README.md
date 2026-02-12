@@ -1,12 +1,28 @@
+# nixos-settings
+
 fcfe6b5e8d
 
+## Installation
+
+### 0. Pre-requisites
+
+```bash
 chmod +x install.sh
 sudo bash ./install.sh
+```
 
-1 manual edit the generated hardware.configuration.nix - it should have no fileSystems -  sudo nano /mnt/etc/nixos/hardware-configuration.nix 
-  
-  
-  { config, lib, pkgs, modulesPath, ... }:
+### 1. Manual Hardware Configuration
+
+Edit the generated `hardware-configuration.nix`. It should have no `fileSystems`.
+
+```bash
+sudo nano /mnt/etc/nixos/hardware-configuration.nix
+```
+
+Example configuration:
+
+```nix
+{ config, lib, pkgs, modulesPath, ... }:
 
 {
   imports = [
@@ -37,34 +53,20 @@ sudo bash ./install.sh
     preLVM = true;
   };
 }
+```
 
+### 2. Install directly from Flake
 
+Impure allows Unfree software.
 
- 
- 
-
-#2 Install directly from Flake (Impure allows Unfree software)
+```bash
 sudo nixos-install --flake /mnt/etc/nixos#lea-pc --impure --no-root-passwd
+```
 
+### 3. Cleanup and Go
 
-#3 Cleanup and Go
+```bash
 sudo umount -R /mnt
 reboot
+```
 
-
-#override from flashdrive to /etc/nixos
-sudo cp -rv /run/media/LEA/DISK/nixos-settings/nixos/* /etc/nixos/
-
-sudo cp -rv /home/LEA/Documents/nixos-settings/nixos/* /etc/nixos/
-
-
-sudo nixos-rebuild build --flake .
-
-
-#rebuild
- sudo nixos-rebuild switch --flake /etc/nixos#lea-pc --impure
-
-
-
-
-# nixos-settings
