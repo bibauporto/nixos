@@ -7,6 +7,10 @@
     unzip     # To unpack Mason/Lazy downloads
     fd
 
+
+    # Apps
+    btop
+
     # Version Control & Cloud
     gh
     rclone

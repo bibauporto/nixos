@@ -2,12 +2,12 @@
 
 {
   # Apply the overlay to make pkgs.cachyosKernels available
-  # nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
+  nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
 
   boot = {
-    # 1. Use the CachyOS v3 Kernel package via the overlay
-    # kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
+    # kernelPackages = pkgs.linuxPackages_latest;
+
     # EFI settings
     loader.efi.canTouchEfiVariables = true;
 
@@ -50,4 +50,5 @@
 #       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
 #     ];
 #   };
+
 }
