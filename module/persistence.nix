@@ -19,6 +19,7 @@
       ".pki"
       ".ssh"
       ".local/share"
+      ".cache/rclone"
       
       ".antigravity"
       ".gemini"
