@@ -14,7 +14,6 @@
     users.LEA.directories = [
       "Documents"
       "Downloads"
-      "OneDrive"
       ".config"
       ".pki"
       ".ssh"

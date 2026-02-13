@@ -9,7 +9,7 @@ in
 {
   environment.systemPackages = [ pkgs.rclone pkgs.fuse3 ];
 
-  # Allow non-root users to use FUSE (needed for mounting)
+  # Allow non-root users to use FUSE
   programs.fuse.userAllowOther = true;
 
   # Define the systemd user service
@@ -21,13 +21,18 @@ in
 
     serviceConfig = {
       Type = "notify";
-      # Ensure network is really up (user session sometimes starts early)
-      # and clean up any stuck mounts from previous runs
+      # Use the system wrapper for fusermount3 to ensure proper permissions
+      Environment = "PATH=/run/wrappers/bin:$PATH";
+      
       ExecStartPre = [
-        "-${pkgs.fuse3}/bin/fusermount3 -uz ${mountPath}"
+        # 1. Unmount if something is already there (lazy unmount)
+        "-/run/wrappers/bin/fusermount3 -uz ${mountPath}"
+        # 2. Force remove the directory to clear stale metadata from the old persistence setup
+        "-${pkgs.coreutils}/bin/rm -rf ${mountPath}"
+        # 3. Create a clean, fresh mount point
         "${pkgs.coreutils}/bin/mkdir -p ${mountPath}"
-        "${pkgs.coreutils}/bin/sleep 10" 
       ];
+
       ExecStart = ''
         ${pkgs.rclone}/bin/rclone mount ${remoteName}: ${mountPath} \
           --vfs-cache-mode full \
@@ -38,14 +43,15 @@ in
           --poll-interval 15s \
           --log-level INFO \
           --log-file /home/LEA/.rclone-onedrive.log \
-          --allow-non-empty
+          --allow-other
       '';
-      ExecStop = "${pkgs.fuse3}/bin/fusermount3 -uz ${mountPath}";
+
+      ExecStop = "/run/wrappers/bin/fusermount3 -uz ${mountPath}";
       Restart = "on-failure";
-      RestartSec = "30";
+      RestartSec = "15"; # Reduced wait time for quicker recovery
     };
   };
 
-  # Enable lingering so the mount starts even if you haven't logged in yet
+  # Ensure the user service starts on boot
   users.users.LEA.linger = true;
 }
