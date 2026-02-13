@@ -6,9 +6,9 @@
     gcc       # The compiler
     gnumake   # The build orchestrator
     unzip     # To unpack Mason/Lazy downloads
+    fd
 
     # Version Control & Cloud
-    git
     gh
     rclone
 
@@ -43,10 +43,25 @@
       nbuild = "sudo nixos-rebuild build --flake .";
       ntest = "sudo nixos-rebuild test --flake .";
       nboot = "sudo nixos-rebuild boot --flake .";
+      nupdate = "nix flake update"
 
       
       ls = "ls --color=auto";
       ll = "ls -lh";
+    };
+  };
+  
+  programs.git = {
+    enable = true;
+    config = {
+      user = {
+        name = "bibauporto";
+        email = "pedroleal2651@gmail.com";
+      };
+      # Optional: Good for modern Git repos
+      init.defaultBranch = "main";
+      # Automatically handle some line ending issues
+      core.autocrlf = "input";
     };
   };
 

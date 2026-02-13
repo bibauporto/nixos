@@ -13,12 +13,13 @@
     ./module/rclone.nix
     ./module/network.nix
     ./module/gc.nix   
-    ./module/libraries.nix
+    #./module/libraries.nix
   ];
 
   # Nix Settings
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nixpkgs.config.allowUnfree = true;
+  
 
   # User Configuration
   users.mutableUsers = false;

@@ -1,20 +1,26 @@
-{ pkgs, ... }:
+{ pkgs, nix-cachyos-kernel, ... }:
 
 {
+  # Apply the overlay to make pkgs.cachyosKernels available
+  # nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
+
   boot = {
-    # 1. EFI settings (Global for loaders)
+    # 1. Use the CachyOS v3 Kernel package via the overlay
+    # kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
+
+    # EFI settings
     loader.efi.canTouchEfiVariables = true;
 
-    # 2. Systemd-boot specific settings
+    # Systemd-boot specific settings
     loader.systemd-boot = {
       enable = true;
       configurationLimit = 10;
     };
 
-    # 3. Hidden menu timeout
+    # Hidden menu timeout
     loader.timeout = 0; 
 
-    # 4. Kernel Parameters for a "Silent" experience
+    # Kernel Parameters for a "Silent" experience
     kernelParams = [
       "quiet"
       "splash"
@@ -32,4 +38,16 @@
     consoleLogLevel = 0;
     initrd.verbose = false;
   };
+
+#  nix.settings = {
+#     # Add the specific caches for the xddxdd repo
+#     substituters = [
+#       "https://attic.xuyh0120.win/lantian"
+#       "https://cache.garnix.io"
+#     ];
+#     trusted-public-keys = [
+#       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+#       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+#     ];
+#   };
 }

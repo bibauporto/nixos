@@ -21,21 +21,21 @@
     glib                # Core utility
     util-linux          # libuuid
     libxml2             # XML
-    libxcrypt           # Password hashing (needed by some older binaries)
+    libxcrypt           # Password hashing
     libxcrypt-legacy
     libunwind           # Stack unwinding
     libuuid             # UUIDs
 
-    # --- GUI / Graphic Tools (needed by many VS Code extensions) ---
+    # --- GUI / Graphic Tools (Corrected top-level names) ---
     libglvnd            # OpenGL
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libXext
-    xorg.libXrender
-    xorg.libXrandr
-    xorg.libXi
-    xorg.libXinerama
-    xorg.libXft
+    libx11              
+    libxcursor          
+    libxext             
+    libxrender          
+    libxrandr          
+    libxi               
+    libxinerama         
+    libxft             
     at-spi2-atk         # Accessibility
     at-spi2-core
     atk
