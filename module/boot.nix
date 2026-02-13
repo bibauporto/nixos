@@ -1,4 +1,4 @@
-{ pkgs, nix-cachyos-kernel, ... }:
+  { pkgs, nix-cachyos-kernel, ... }:
 
 {
   # Apply the overlay to make pkgs.cachyosKernels available
@@ -7,7 +7,7 @@
   boot = {
     # 1. Use the CachyOS v3 Kernel package via the overlay
     # kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
-
+    kernelPackages = pkgs.linuxPackages_latest;
     # EFI settings
     loader.efi.canTouchEfiVariables = true;
 

@@ -43,7 +43,7 @@
       nbuild = "sudo nixos-rebuild build --flake .";
       ntest = "sudo nixos-rebuild test --flake .";
       nboot = "sudo nixos-rebuild boot --flake .";
-      nupdate = "nix flake update"
+      nupdate = "nix flake update";
 
       
       ls = "ls --color=auto";
