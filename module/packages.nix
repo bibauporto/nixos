@@ -2,7 +2,6 @@
 
 {
   environment.systemPackages = with pkgs; [
-    neovim
     gcc       # The compiler
     gnumake   # The build orchestrator
     unzip     # To unpack Mason/Lazy downloads

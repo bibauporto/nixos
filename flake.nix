@@ -2,14 +2,19 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     impermanence.url = "github:nix-community/impermanence";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     
     # nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
-  outputs = { self, nixpkgs, impermanence, ... }: {
+  outputs = { self, nixpkgs, impermanence, ... }@inputs: {
   # outputs = { self, nixpkgs, impermanence, nix-cachyos-kernel, ... }: {
     nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
    
       # specialArgs = { inherit nix-cachyos-kernel; }; 
       modules = [ 

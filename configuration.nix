@@ -13,6 +13,8 @@
     ./module/rclone.nix
     ./module/network.nix
     ./module/gc.nix   
+    ./module/nvim.nix
+    ./module/fonts.nix
     #./module/libraries.nix
   ];
 

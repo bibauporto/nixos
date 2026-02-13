@@ -1,7 +1,5 @@
 # nixos-settings
 
-fcfe6b5e8d
-
 ## Installation
 
 ### 0. Pre-requisites
