@@ -3,8 +3,9 @@
 {
   nix.gc = {
     automatic = true;
+    persistent = true;
     dates = "weekly";
-    options = "--delete-older-than 7d";
+    options = "--delete-older-than 30d";
   };
   
   # Optional: Optimizes the store by hard-linking duplicate files

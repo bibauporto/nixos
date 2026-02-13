@@ -21,9 +21,12 @@ in
 
     serviceConfig = {
       Type = "notify";
+      # Ensure network is really up (user session sometimes starts early)
+      # and clean up any stuck mounts from previous runs
       ExecStartPre = [
+        "-${pkgs.fuse3}/bin/fusermount3 -uz ${mountPath}"
         "${pkgs.coreutils}/bin/mkdir -p ${mountPath}"
-        "-${pkgs.fuse3}/bin/fusermount3 -u ${mountPath}"
+        "${pkgs.coreutils}/bin/sleep 10" 
       ];
       ExecStart = ''
         ${pkgs.rclone}/bin/rclone mount ${remoteName}: ${mountPath} \
@@ -34,9 +37,10 @@ in
           --dir-cache-time 9999h \
           --poll-interval 15s \
           --log-level INFO \
-          --log-file /home/LEA/.rclone-onedrive.log
+          --log-file /home/LEA/.rclone-onedrive.log \
+          --allow-non-empty
       '';
-      ExecStop = "${pkgs.fuse3}/bin/fusermount3 -u ${mountPath}";
+      ExecStop = "${pkgs.fuse3}/bin/fusermount3 -uz ${mountPath}";
       Restart = "on-failure";
       RestartSec = "30";
     };

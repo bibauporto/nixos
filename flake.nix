@@ -6,20 +6,27 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
-  outputs = { self, nixpkgs, impermanence, nix-cachyos-kernel, ... }@inputs: {
-    nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
-   
-      specialArgs = { inherit nix-cachyos-kernel; }; 
-      modules = [ 
-        ./configuration.nix 
-        impermanence.nixosModules.impermanence 
-      ];
+  outputs =
+    {
+      self,
+      nixpkgs,
+      impermanence,
+      nix-cachyos-kernel,
+      ...
+    }@inputs:
+    {
+      nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs nix-cachyos-kernel; };
+
+        modules = [
+          ./configuration.nix
+          impermanence.nixosModules.impermanence
+        ];
+      };
     };
-  };
 }

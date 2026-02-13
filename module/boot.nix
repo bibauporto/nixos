@@ -1,4 +1,4 @@
-  { pkgs, nix-cachyos-kernel, ... }:
+{ pkgs, nix-cachyos-kernel, ... }:
 
 {
   # Apply the overlay to make pkgs.cachyosKernels available
@@ -18,7 +18,7 @@
     };
 
     # Hidden menu timeout
-    loader.timeout = 0; 
+    loader.timeout = 0;
 
     # Kernel Parameters for a "Silent" experience
     kernelParams = [
@@ -38,17 +38,4 @@
     consoleLogLevel = 0;
     initrd.verbose = false;
   };
-
-#  nix.settings = {
-#     # Add the specific caches for the xddxdd repo
-#     substituters = [
-#       "https://attic.xuyh0120.win/lantian"
-#       "https://cache.garnix.io"
-#     ];
-#     trusted-public-keys = [
-#       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
-#       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-#     ];
-#   };
-
 }

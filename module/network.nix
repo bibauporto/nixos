@@ -1,11 +1,20 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # Networking configuration
   networking.hostName = "lea-pc";
+  networking.useDHCP = lib.mkDefault false;
   networking.networkmanager.enable = true;
   networking.networkmanager.dns = "systemd-resolved";
-  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+  networking.nameservers = [
+    "1.1.1.1"
+    "8.8.8.8"
+  ];
 
   # DNS Resolver (systemd-resolved)
   services.resolved = {
@@ -14,7 +23,10 @@
       Resolve = {
         DNSSEC = "false";
         Domains = [ "~." ];
-        FallbackDNS = [ "1.1.1.1" "8.8.8.8" ];
+        FallbackDNS = [
+          "1.1.1.1"
+          "8.8.8.8"
+        ];
       };
     };
   };
@@ -23,7 +35,11 @@
   networking.firewall = {
     enable = true;
     # Allow common ports
-    allowedTCPPorts = [ 22 80 443 ];
+    allowedTCPPorts = [
+      22
+      80
+      443
+    ];
     allowedUDPPorts = [ ];
   };
 }

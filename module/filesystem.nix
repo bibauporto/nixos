@@ -49,6 +49,7 @@
 
   fileSystems."/boot" = {
     device = "/dev/nvme0n1p1";
+    # device = "/dev/disk/by-label/boot";
     fsType = "vfat";
   };
 
