@@ -3,15 +3,16 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     impermanence.url = "github:nix-community/impermanence";
     
-    # nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
   };
 
-  outputs = { self, nixpkgs, impermanence, ... }: {
-  # outputs = { self, nixpkgs, impermanence, nix-cachyos-kernel, ... }: {
+  outputs = { self, nixpkgs, impermanence, nix-cachyos-kernel, ... }: {
     nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-   
-      # specialArgs = { inherit nix-cachyos-kernel; }; 
+      
+      # Passes the input into your other files like boot.nix
+      specialArgs = { inherit nix-cachyos-kernel; }; 
+      
       modules = [ 
         ./configuration.nix 
         impermanence.nixosModules.impermanence 
