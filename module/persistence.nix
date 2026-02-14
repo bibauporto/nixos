@@ -20,12 +20,23 @@
       ".pki"
       ".ssh"
       ".local/share"
+
+
+      ################ 
+      # CACHE
       ".cache/rclone"
-      
+      ".cache/nvim"
+      #################      
+
+      ################
+      # APPs
       ".antigravity"
       ".gemini"
       ".bun"
       ".vscode"
+       ###############
+
+
       
       ".gnupg"
     ];
