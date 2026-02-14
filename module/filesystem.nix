@@ -46,8 +46,8 @@
   # zRAM configuration
   zramSwap = {
     enable = true;
-    memoryPercent = 70; # Provides ~11.2GB of compressed swap space.
-    priority = 100;      # Higher priority than disk swap.
+    memoryPercent = 70; 
+    priority = 100;    
   };
 
   # Physical Swap (Last resort/Safety net)
