@@ -1,13 +1,19 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   environment.systemPackages = with pkgs; [
-    unzip     # To unpack Mason/Lazy downloads
-
+    # Support
+    unzip
 
     # Apps
     btop
     wpsoffice
+    antigravity
 
     # Version Control & Cloud
     gh
@@ -15,24 +21,26 @@
 
     # Browsers
     microsoft-edge
-    
+
     # Development
     vscode
     opencode
     go
     bun
     nodejs_25
-    docker
-    antigravity 
-    
+    openssl_3
+
     # Required for your fish config
     fastfetch
+
+    # Nix
+    nixfmt
   ];
 
   # All fish settings must be inside this block
   programs.fish = {
     enable = true;
-    
+
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
       if status is-interactive
@@ -46,13 +54,13 @@
       ntest = "sudo nixos-rebuild test --flake .";
       nboot = "sudo nixos-rebuild boot --flake .";
       nupdate = "nix flake update";
+      nlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
 
-      
       ls = "ls --color=auto";
       ll = "ls -lh";
     };
   };
-  
+
   programs.git = {
     enable = true;
     config = {
@@ -67,9 +75,22 @@
     };
   };
 
+  virtualisation.docker.enable = true;
+
+  environment.sessionVariables = {
+    PRISMA_BINARY_TARGETS = "debian-openssl-1.1.x";
+  };
+
   users.users.LEA = {
-    isNormalUser = true; 
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "uinput" ];
+    isNormalUser = true;
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "input"
+      "uinput"
+      "docker"
+    ];
     shell = pkgs.fish;
   };
 }

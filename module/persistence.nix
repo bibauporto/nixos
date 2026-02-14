@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   environment.persistence."/persist" = {
     hideMounts = true;
@@ -7,11 +12,12 @@
       "/var/lib/sbctl"
       "/var/lib/bluetooth"
       "/var/lib/nixos"
+      "/var/lib/docker"
       "/etc/NetworkManager/system-connections"
     ];
-   files = [
-    "/etc/machine-id"
-   ];
+    files = [
+      "/etc/machine-id"
+    ];
     users.LEA.directories = [
       "Documents"
       "Downloads"
@@ -21,11 +27,10 @@
       ".ssh"
       ".local/share"
 
-
-      ################ 
+      ################
       # CACHE
       ".cache"
-      #################      
+      #################
 
       ################
       # APPs
@@ -33,10 +38,8 @@
       ".gemini"
       ".bun"
       ".vscode"
-       ###############
+      ###############
 
-
-      
       ".gnupg"
     ];
   };

@@ -7,7 +7,7 @@
     dates = "weekly";
     options = "--delete-older-than 30d";
   };
-  
+
   # Optional: Optimizes the store by hard-linking duplicate files
   nix.settings.auto-optimise-store = true;
 }

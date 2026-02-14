@@ -1,9 +1,13 @@
-{ pkgs, nix-cachyos-kernel, lib, ... }:
+{
+  pkgs,
+  nix-cachyos-kernel,
+  lib,
+  ...
+}:
 
 {
   # Apply the overlay to make pkgs.cachyosKernels available
   nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
-
 
   boot = {
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;

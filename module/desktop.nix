@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   services.xserver.enable = true;
@@ -21,7 +26,6 @@
   ];
 
   # 3. Unlock Fractional Scaling for the Login Screen (GDM)
-  # FIX: This must be a STRING formatted like a list for the INI file
   services.displayManager.gdm.settings = {
     "org/gnome/mutter" = {
       experimental-features = "['scale-monitor-framebuffer']";
@@ -39,12 +43,24 @@
   services.gvfs.enable = true;
 
   environment.gnome.excludePackages = with pkgs; [
-    epiphany geary gnome-maps gnome-music gnome-contacts gnome-weather gnome-tour
+    epiphany
+    geary
+    gnome-maps
+    gnome-music
+    gnome-contacts
+    gnome-weather
+    gnome-tour
   ];
 
   environment.systemPackages = with pkgs; [
-    nautilus gnome-console gnome-text-editor gnome-calculator loupe
-    gnome-tweaks gnome-extensions-cli xclip
+    nautilus
+    gnome-console
+    gnome-text-editor
+    gnome-calculator
+    loupe
+    gnome-tweaks
+    gnome-extensions-cli
+    xclip
     gnomeExtensions.just-perfection
     gnomeExtensions.blur-my-shell
     gnomeExtensions.appindicator

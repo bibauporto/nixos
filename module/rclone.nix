@@ -7,7 +7,10 @@ let
   mountPath = "/home/LEA/OneDrive";
 in
 {
-  environment.systemPackages = [ pkgs.rclone pkgs.fuse3 ];
+  environment.systemPackages = [
+    pkgs.rclone
+    pkgs.fuse3
+  ];
 
   # Allow non-root users to use FUSE
   programs.fuse.userAllowOther = true;
@@ -23,7 +26,7 @@ in
       Type = "notify";
       # Use the system wrapper for fusermount3 to ensure proper permissions
       Environment = "PATH=/run/wrappers/bin:$PATH";
-      
+
       ExecStartPre = [
         # 1. Unmount if something is already there (lazy unmount)
         "-/run/wrappers/bin/fusermount3 -uz ${mountPath}"

@@ -1,5 +1,9 @@
-
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   ##############################
@@ -8,7 +12,10 @@
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = [ "size=8G" "mode=755" ];
+    options = [
+      "size=8G"
+      "mode=755"
+    ];
   };
 
   ##############################
@@ -17,7 +24,11 @@
   fileSystems."/nix" = {
     device = "/dev/mapper/cryptroot";
     fsType = "btrfs";
-    options = [ "subvol=nix" "compress=zstd" "noatime" ];
+    options = [
+      "subvol=nix"
+      "compress=zstd"
+      "noatime"
+    ];
   };
 
   ##############################
@@ -26,7 +37,11 @@
   fileSystems."/persist" = {
     device = "/dev/mapper/cryptroot";
     fsType = "btrfs";
-    options = [ "subvol=persist" "compress=zstd" "noatime" ];
+    options = [
+      "subvol=persist"
+      "compress=zstd"
+      "noatime"
+    ];
     neededForBoot = true;
   };
 
@@ -35,14 +50,14 @@
   ##############################
   fileSystems."/boot" = {
     device = "/dev/nvme0n1p1";
-# device = "/dev/disk/by-label/boot";
+    # device = "/dev/disk/by-label/boot";
     fsType = "vfat";
   };
 
   ##############################
   # Memory & Swap Optimizations
   ##############################
-  
+
   # zRAM configuration
   zramSwap = {
     enable = true;
@@ -51,10 +66,12 @@
   };
 
   # Physical Swap (Last resort/Safety net)
-  swapDevices = [{
-    device = "/persist/swap/swapfile";
-    priority = 0;
-  }];
+  swapDevices = [
+    {
+      device = "/persist/swap/swapfile";
+      priority = 0;
+    }
+  ];
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 5;
@@ -63,7 +80,3 @@
   };
 
 }
-
-
-
-
