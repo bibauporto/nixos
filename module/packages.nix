@@ -22,6 +22,7 @@
     go
     bun
     nodejs_25
+    docker
     antigravity 
     
     # Required for your fish config
