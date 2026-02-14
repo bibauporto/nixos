@@ -56,17 +56,11 @@
     priority = 0; 
   }];
 
-  # Performance Tuning for Web Dev (Docker/VSCode)
-  boot.kernel.sysctl = {
-    # Delay swapping until roughly 12GB of RAM is in use.
-    "vm.swappiness" = 10;
-
-    # Don't evict the filesystem cache too aggressively (keeps VS Code snappy).
-    "vm.vfs_cache_pressure" = 50;
-
-    # Required for some Docker containers and VS Code's file watcher.
-    "fs.inotify.max_user_watches" = 524288;
+    boot.kernel.sysctl = {
+    "vm.swappiness" = 5; 
+    "vm.vfs_cache_pressure" = 50; 
   };
+
 }
 
 
