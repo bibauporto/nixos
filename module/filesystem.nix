@@ -70,7 +70,9 @@
 
 
   swapDevices = [
-    { device = "/persist/swap/swapfile"; }
+    { device = "/persist/swap/swapfile";
+priority = 0;
+ }
   ];
 }
 
