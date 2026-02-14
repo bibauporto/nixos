@@ -1,78 +1,77 @@
+
 { config, lib, pkgs, ... }:
 
 {
   ##############################
   # Root (impermanent)
   ##############################
-
   fileSystems."/" = {
     device = "none";
     fsType = "tmpfs";
-    options = [
-      "size=8G"
-      "mode=755"
-    ];
+    options = [ "size=8G" "mode=755" ];
   };
 
   ##############################
   # Nix store
   ##############################
-
   fileSystems."/nix" = {
     device = "/dev/mapper/cryptroot";
     fsType = "btrfs";
-    options = [
-      "subvol=nix"
-      "compress=zstd"
-      "noatime"
-    ];
+    options = [ "subvol=nix" "compress=zstd" "noatime" ];
   };
 
   ##############################
   # Persistent state
   ##############################
-
   fileSystems."/persist" = {
     device = "/dev/mapper/cryptroot";
     fsType = "btrfs";
-    options = [
-      "subvol=persist"
-      "compress=zstd"
-      "noatime"
-    ];
+    options = [ "subvol=persist" "compress=zstd" "noatime" ];
     neededForBoot = true;
   };
 
   ##############################
   # EFI boot
   ##############################
-
   fileSystems."/boot" = {
     device = "/dev/nvme0n1p1";
-    # device = "/dev/disk/by-label/boot";
+# device = "/dev/disk/by-label/boot";
     fsType = "vfat";
   };
 
   ##############################
-  # Swap (btrfs-safe)
+  # Memory & Swap Optimizations
   ##############################
-
-  # Enable zRAM swap
-  zramSwap.enable = true;
   
-  # How much of your 16GB to dedicate to the zRAM device
-  # 50% to 100% is common; it only uses RAM when data is actually in it
-  zramSwap.memoryPercent = 70; 
+  # zRAM configuration
+  zramSwap = {
+    enable = true;
+    memoryPercent = 70; # Provides ~11.2GB of compressed swap space.
+    priority = 100;      # Higher priority than disk swap.
+  };
 
-  # Optimization: Tell the kernel to prefer zRAM over the SSD swap
-  # By setting a higher priority (e.g., 100) than the SSD swap (usually -2)
-  zramSwap.priority = 100;
+  # Physical Swap (Last resort/Safety net)
+  swapDevices = [{ 
+    device = "/persist/swap/swapfile"; 
+    priority = 0; 
+  }];
 
+  # Performance Tuning for Web Dev (Docker/VSCode)
+  boot.kernel.sysctl = {
+    # Delay swapping until roughly 12GB of RAM is in use.
+    "vm.swappiness" = 10;
 
-  swapDevices = [
-    { device = "/persist/swap/swapfile";
-priority = 0;
- }
-  ];
+    # Don't evict the filesystem cache too aggressively (keeps VS Code snappy).
+    "vm.vfs_cache_pressure" = 50;
+
+    # Required for some Docker containers and VS Code's file watcher.
+    "fs.inotify.max_user_watches" = 524288;
+  };
 }
+
+
+
+    
+  
+  
 
