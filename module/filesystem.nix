@@ -59,6 +59,9 @@
     boot.kernel.sysctl = {
     "vm.swappiness" = 5; 
     "vm.vfs_cache_pressure" = 50; 
+
+"fs.inotify.max_user_watches" = 524288;
+
   };
 
 }
