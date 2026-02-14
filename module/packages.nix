@@ -35,6 +35,7 @@
 
     # Nix
     nixfmt
+    direnv
   ];
 
   # All fish settings must be inside this block
@@ -76,10 +77,6 @@
   };
 
   virtualisation.docker.enable = true;
-
-  environment.sessionVariables = {
-    PRISMA_BINARY_TARGETS = "debian-openssl-1.1.x";
-  };
 
   users.users.LEA = {
     isNormalUser = true;
