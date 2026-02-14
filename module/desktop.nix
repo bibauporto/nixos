@@ -8,6 +8,7 @@
 
   # Strips GNOME down to the basics
   services.gnome.core-apps.enable = false;
+  documentation.doc.enable = false;
 
   # Ensure Nautilus can handle file operations/trash/mounting
   services.gvfs.enable = true;

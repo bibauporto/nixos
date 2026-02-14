@@ -1,8 +1,9 @@
-{ pkgs, nix-cachyos-kernel, ... }:
+{ pkgs, nix-cachyos-kernel, lib, ... }:
 
 {
   # Apply the overlay to make pkgs.cachyosKernels available
   nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
+
 
   boot = {
     kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
@@ -12,10 +13,16 @@
     loader.efi.canTouchEfiVariables = true;
 
     # Systemd-boot specific settings
-    loader.systemd-boot = {
+    loader.systemd-boot.enable = lib.mkForce false;
+
+    lanzaboote = {
       enable = true;
-      configurationLimit = 10;
+      pkiBundle = "/var/lib/sbctl";
     };
+
+    # TPM2 unlocking
+    initrd.systemd.enable = true;
+    initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
     # Hidden menu timeout
     loader.timeout = 0;

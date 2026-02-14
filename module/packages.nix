@@ -2,14 +2,12 @@
 
 {
   environment.systemPackages = with pkgs; [
-    gcc       # The compiler
-    gnumake   # The build orchestrator
     unzip     # To unpack Mason/Lazy downloads
-    fd
 
 
     # Apps
     btop
+    wpsoffice
 
     # Version Control & Cloud
     gh

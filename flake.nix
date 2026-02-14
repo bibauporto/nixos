@@ -8,6 +8,10 @@
     };
 
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+    };
   };
 
   outputs =
@@ -16,6 +20,7 @@
       nixpkgs,
       impermanence,
       nix-cachyos-kernel,
+      lanzaboote,
       ...
     }@inputs:
     {
@@ -26,6 +31,7 @@
         modules = [
           ./configuration.nix
           impermanence.nixosModules.impermanence
+          lanzaboote.nixosModules.lanzaboote
         ];
       };
     };

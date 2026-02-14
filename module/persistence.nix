@@ -4,6 +4,7 @@
     hideMounts = true;
     directories = [
       "/var/log"
+      "/var/lib/sbctl"
       "/var/lib/bluetooth"
       "/var/lib/nixos"
       "/etc/NetworkManager/system-connections"
@@ -14,6 +15,7 @@
     users.LEA.directories = [
       "Documents"
       "Downloads"
+      "Code"
       ".config"
       ".pki"
       ".ssh"
