@@ -46,29 +46,24 @@
   # zRAM configuration
   zramSwap = {
     enable = true;
-    memoryPercent = 70; 
-    priority = 100;    
+    memoryPercent = 30;
+    priority = 100;
   };
 
   # Physical Swap (Last resort/Safety net)
-  swapDevices = [{ 
-    device = "/persist/swap/swapfile"; 
-    priority = 0; 
+  swapDevices = [{
+    device = "/persist/swap/swapfile";
+    priority = 0;
   }];
 
-    boot.kernel.sysctl = {
-    "vm.swappiness" = 5; 
-    "vm.vfs_cache_pressure" = 50; 
-
-"fs.inotify.max_user_watches" = 524288;
-
+  boot.kernel.sysctl = {
+    "vm.swappiness" = 5;
+    "vm.vfs_cache_pressure" = 50;
+    "fs.inotify.max_user_watches" = 524288;
   };
 
 }
 
 
 
-    
-  
-  
 
