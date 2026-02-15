@@ -14,8 +14,5 @@
       "nix-cachyos-kernel.cachix.org-1:7Ure7vYidL6E8nI772/0i27X/fC9Y6qS0I70/5629X4="
     ];
 
-    # Optimization: This tells Nix to check caches first and wait a bit longer for them
-    connect-timeout = 5;
-    fallback = true;
   };
 }
