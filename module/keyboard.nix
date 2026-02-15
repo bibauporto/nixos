@@ -13,7 +13,7 @@
       description = "LEA custom layout";
       languages = [ "eng" ];
 
-      symbolsFile = pkgs.writeText "lea" ''
+      symbolsFile = pkgs.writeText "LEA" ''
         default partial alphanumeric_keys
         xkb_symbols "lea" {
             name[Group1]= "LEA";
