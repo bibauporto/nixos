@@ -13,6 +13,7 @@
       "/var/lib/bluetooth"
       "/var/lib/nixos"
       "/var/lib/docker"
+      /var/lib/flatpak
       "/etc/NetworkManager/system-connections"
     ];
     files = [
@@ -38,6 +39,11 @@
       ".gemini"
       ".bun"
       ".vscode"
+      ###############
+
+      ###############
+      # FLATPAK
+      ".var/app"
       ###############
 
       ".gnupg"

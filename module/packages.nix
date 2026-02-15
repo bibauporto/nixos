@@ -15,8 +15,6 @@
     wpsoffice
     antigravity
 
-    # stremio
-
     # Version Control & Cloud
     gh
     rclone
@@ -41,9 +39,8 @@
     direnv
   ];
 
-  # nixpkgs.config.permittedInsecurePackages = [
-  #   "qtwebengine-5.15.19"
-  # ];
+  services.flatpak.enable = true;
+
   # All fish settings must be inside this block
   programs.fish = {
     enable = true;
