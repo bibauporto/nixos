@@ -9,12 +9,13 @@
     hideMounts = true;
     directories = [
       "/var/log"
-      "/var/lib/sbctl"
       "/var/lib/bluetooth"
       "/var/lib/nixos"
-      "/var/lib/docker"
-      "/var/lib/flatpak"
       "/etc/NetworkManager/system-connections"
+
+      "/var/lib/docker" # Docker
+      "/var/lib/sbctl" # Lanzaboot
+      "/var/lib/flatpak" # Flatpak
     ];
     files = [
       "/etc/machine-id"
