@@ -13,7 +13,7 @@
     device = "none";
     fsType = "tmpfs";
     options = [
-      "size=8G"
+      "size=2G"
       "mode=755"
     ];
   };
@@ -58,25 +58,26 @@
   # Memory & Swap Optimizations
   ##############################
 
-  # zRAM configuration
   zramSwap = {
     enable = true;
-    memoryPercent = 30;
+    memoryPercent = 40; 
     priority = 100;
   };
 
-  # Physical Swap (Last resort/Safety net)
-  swapDevices = [
-    {
-      device = "/persist/swap/swapfile";
-      priority = 0;
-    }
-  ];
+  swapDevices = [{
+    device = "/persist/swap/swapfile";
+    priority = 0;
+  }];
 
   boot.kernel.sysctl = {
-    "vm.swappiness" = 5;
-    "vm.vfs_cache_pressure" = 50;
+    "vm.swappiness" = 150;
+    "vm.page-cluster" = 0;
+
+    "vm.vfs_cache_pressure" = 50; 
     "fs.inotify.max_user_watches" = 524288;
+
+    "vm.watermark_boost_factor" = 0;
+    "vm.watermark_scale_factor" = 125;
   };
 
 }

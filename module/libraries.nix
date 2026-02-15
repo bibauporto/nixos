@@ -1,51 +1,63 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 {
-  # 1. envfs: Fixes scripts using #!/usr/bin/env or #!/bin/bash
-  services.envfs.enable = true;
-
-  # 2. nix-ld: The bridge for unpatched binaries (LSPs, Mason, etc.)
+  # The dynamic linker for unpatched binaries (Chrome/Electron/Bun tools)
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
-    # --- The Essentials ---
-    # openssl
-    # stdenv.cc.cc.lib
-    zlib # Compression
-    fuse3 # Filesystems (AppImages)
-    icu # Internationalization
-    nss # Security
-    openssl # Cryptography
-    curl # Networking
-    expat # XML parsing
+    # --- Core System & Hardware ---
+    zlib
+    glibc
+    icu
+    udev          # Hardware access (webcam/keyboard)
+    libusb1
+    libuuid
+    libdrm
+    mesa          # Essential for 3D/Webgl
 
-    # --- Development & Languages ---
-    glib # Core utility
-    util-linux # libuuid
-    libxml2 # XML
-    libxcrypt # Password hashing
-    libxcrypt-legacy
-    libunwind # Stack unwinding
-    libuuid # UUIDs
+    # --- Video & Audio Acceleration ---
+    libGL
+    libglvnd
+    libva         # Hardware video decoding (saves CPU)
+    pipewire      # Modern audio/screen sharing
+    libpulseaudio
+    alsa-lib
 
-    # --- GUI / Graphic Tools (Corrected top-level names) ---
-    libglvnd # OpenGL
-    libx11
-    libxcursor
-    libxext
-    libxrender
-    libxrandr
-    libxi
-    libxinerama
-    libxft
-    at-spi2-atk # Accessibility
+    # --- UI & Graphics Stack ---
+    at-spi2-atk
     at-spi2-core
     atk
-    cairo # 2D graphics
-    pango # Text layout
-    gdk-pixbuf # Image loading
-    gtk3 # Modern GUI apps
-    libsecret # VS Code / GitHub Auth storage
-    libcap # Capabilities
-  ];
+    cairo
+    cups          # Required by many Electron apps to launch
+    dbus
+    expat
+    fontconfig
+    freetype
+    gdk-pixbuf
+    glib
+    gtk3
+    libnotify
+    pango
 
+    # --- Browser/Electron Security & WebEngine ---
+    nspr
+    nss
+    libappindicator-gtk3
+
+    # --- X11 & Wayland Libraries (Corrected Names) ---
+    libX11
+    libXScrnSaver
+    libXcomposite
+    libXcursor
+    libXdamage
+    libXext
+    libXfixes
+    libXi
+    libXrandr
+    libXrender
+    libXtst
+    libxkbfile
+    libxshmfence
+    libxcb
+    libxkbcommon
+  ];
 }

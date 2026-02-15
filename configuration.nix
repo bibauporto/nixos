@@ -20,7 +20,7 @@
     ./module/gc.nix
     ./module/nvim.nix
     ./module/fonts.nix
-    # ./module/libraries.nix
+    ./module/libraries.nix
   ];
 
   # Nix Settings
