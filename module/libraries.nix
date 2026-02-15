@@ -13,6 +13,7 @@
     libuuid
     libdrm
     mesa # Essential for 3D/Webgl
+    mesa.libgbm
 
     # --- Video & Audio Acceleration ---
     libGL
