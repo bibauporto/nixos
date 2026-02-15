@@ -13,7 +13,7 @@
       "/var/lib/bluetooth"
       "/var/lib/nixos"
       "/var/lib/docker"
-      /var/lib/flatpak
+      "/var/lib/flatpak"
       "/etc/NetworkManager/system-connections"
     ];
     files = [
