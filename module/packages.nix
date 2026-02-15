@@ -13,6 +13,7 @@
     # Apps
     btop
     wpsoffice
+    stremio
     antigravity
 
     # Version Control & Cloud
