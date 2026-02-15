@@ -1,22 +1,21 @@
 {
   pkgs,
-  nix-cachyos-kernel,
+  inputs,
   lib,
   ...
 }:
 
+let
+  # Optimization: Define the kernel here to keep the boot block clean
+  cachyKernel =
+    inputs.nix-cachyos-kernel.packages.${pkgs.stdenv.hostPlatform.system}.linux-cachyos-latest-x86_64-v3;
+in
 {
-  # Apply the overlay to make pkgs.cachyosKernels available
-  nixpkgs.overlays = [ nix-cachyos-kernel.overlays.pinned ];
-
   boot = {
-    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-x86_64-v3;
-    # kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.linuxPackagesFor cachyKernel;
 
-    # EFI settings
+    loader.timeout = 0;
     loader.efi.canTouchEfiVariables = true;
-
-    # Systemd-boot specific settings
     loader.systemd-boot.enable = lib.mkForce false;
 
     lanzaboote = {
@@ -24,14 +23,11 @@
       pkiBundle = "/var/lib/sbctl";
     };
 
-    # TPM2 unlocking
+    # TPM2 & Silent Boot
     initrd.systemd.enable = true;
     initrd.luks.devices."cryptroot".crypttabExtraOpts = [ "tpm2-device=auto" ];
 
-    # Hidden menu timeout
-    loader.timeout = 0;
-
-    # Kernel Parameters for a "Silent" experience
+    # Combined Silent Boot Params
     kernelParams = [
       "quiet"
       "splash"
@@ -42,10 +38,7 @@
       "boot.shell_on_fail"
     ];
 
-    # Plymouth provides the graphical logo and decryption prompt
     plymouth.enable = true;
-
-    # Clean up the console output
     consoleLogLevel = 0;
     initrd.verbose = false;
   };

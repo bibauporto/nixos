@@ -39,6 +39,10 @@
     direnv
   ];
 
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
+
   # All fish settings must be inside this block
   programs.fish = {
     enable = true;

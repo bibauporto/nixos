@@ -6,32 +6,28 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
 
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      impermanence,
-      nix-cachyos-kernel,
-      lanzaboote,
-      ...
-    }@inputs:
+    { self, nixpkgs, ... }@inputs:
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs nix-cachyos-kernel; };
+        specialArgs = { inherit inputs; };
 
         modules = [
+          { nixpkgs.hostPlatform = "x86_64-linux"; }
+
+          inputs.impermanence.nixosModules.impermanence
+          inputs.lanzaboote.nixosModules.lanzaboote
+
           ./configuration.nix
-          impermanence.nixosModules.impermanence
-          lanzaboote.nixosModules.lanzaboote
+          ./module/cache-settings.nix 
         ];
       };
     };
