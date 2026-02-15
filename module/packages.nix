@@ -13,7 +13,7 @@
     # Apps
     btop
     wpsoffice
-    stremio
+    inputs.nixos-stable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.stremio
     antigravity
 
     # Version Control & Cloud
@@ -37,10 +37,6 @@
     # Nix
     nixfmt
     direnv
-  ];
-
-  nixpkgs.config.permittedInsecurePackages = [
-    "qtwebengine-5.15.19"
   ];
 
   # All fish settings must be inside this block

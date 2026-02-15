@@ -12,10 +12,17 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixos-stable.url = "github:nixos/nixpkgs/nixos-24.11";
   };
 
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      nixos-stable,
+      ...
+    }@inputs:
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -27,7 +34,7 @@
           inputs.lanzaboote.nixosModules.lanzaboote
 
           ./configuration.nix
-          ./module/cache-settings.nix 
+          ./module/cache-settings.nix
         ];
       };
     };
