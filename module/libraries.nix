@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # The dynamic linker for unpatched binaries (Chrome/Electron/Bun tools)
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
     # --- Core System & Hardware ---
