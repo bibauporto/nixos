@@ -30,7 +30,8 @@
     go
     bun
     nodejs_25
-    openssl_3
+    prisma_7
+    chromium
 
     # Required for your fish config
     fastfetch
