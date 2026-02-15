@@ -5,15 +5,11 @@
   ...
 }:
 
-let
-  # Optimization: Define the kernel here to keep the boot block clean
-  cachyKernel =
-    inputs.nix-cachyos-kernel.packages.${pkgs.stdenv.hostPlatform.system}.linux-cachyos-latest-x86_64-v3;
-in
 {
   boot = {
-    kernelPackages = pkgs.linuxPackagesFor cachyKernel;
-
+    # CachyOs is configured on the flake.nix
+    # This is the fallback
+    # kernelPackages = pkgs.linuxPackages_latest;
     loader.timeout = 0;
     loader.efi.canTouchEfiVariables = true;
     loader.systemd-boot.enable = lib.mkForce false;

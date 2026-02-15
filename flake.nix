@@ -12,21 +12,28 @@
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
   outputs =
-    {
-      self,
-      nixpkgs,
-      ...
-    }@inputs:
+    { self, nixpkgs, ... }@inputs:
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
-
         modules = [
-          { nixpkgs.hostPlatform = "x86_64-linux"; }
+          (
+            { pkgs, ... }:
+            {
+              nixpkgs.hostPlatform = "x86_64-linux";
+
+              # 1. Apply the CachyOS Overlay
+              nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
+
+              # 2. Configure the Kernel
+              # Choose 'latest', 'lts', or a specific variant like 'bore'
+              boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+
+            }
+          )
 
           inputs.impermanence.nixosModules.impermanence
           inputs.lanzaboote.nixosModules.lanzaboote
