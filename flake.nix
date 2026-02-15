@@ -13,14 +13,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixos-stable.url = "github:nixos/nixpkgs/nixos-24.11";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nixos-stable,
       ...
     }@inputs:
     {
