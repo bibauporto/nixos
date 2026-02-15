@@ -30,6 +30,15 @@
   ];
   nixpkgs.config.allowUnfree = true;
 
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver # For newer Zenbooks (Broadwell+)
+      intel-vaapi-driver # For older Intel graphics
+      libvdpau-va-gl
+    ];
+  };
+
   # User Configuration
   users.mutableUsers = false;
   users.users.LEA = {
