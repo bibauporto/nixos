@@ -58,7 +58,7 @@
       nboot = "sudo nixos-rebuild boot --flake .";
       nupdate = "nix flake update";
       nlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
-      ntmp = "sudo du -hx / --max-depth=5"
+      ntmp = "sudo du -hx / --max-depth=5";
 
       ls = "ls --color=auto";
       ll = "ls -lh";
