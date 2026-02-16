@@ -5,21 +5,53 @@
   ...
 }:
 
+let
+  wallpaperPath = ./. + "/wallpaper.jpg";
+in
 {
   services.xserver.enable = true;
   services.xserver.excludePackages = [ pkgs.xterm ];
   services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
+  # Disable sudo lecture
+  security.sudo.extraConfig = ''
+    Defaults lecture=never
+  '';
+
   # 1. Enable dconf
   programs.dconf.enable = true;
 
-  # 2. Unlock Fractional Scaling for the User Session
+  # 2. GNOME Declarative Configuration
   programs.dconf.profiles.user.databases = [
     {
       settings = {
         "org/gnome/mutter" = {
           experimental-features = [ "scale-monitor-framebuffer" ];
+        };
+
+        "org/gnome/desktop/interface" = {
+          color-scheme = "prefer-dark";
+        };
+        "org/gnome/desktop/wm/preferences" = {
+          button-layout = "appmenu:minimize,maximize,close";
+        };
+
+        "org/gnome/desktop/background" = {
+          picture-uri = "file://${wallpaperPath}";
+          picture-uri-dark = "file://${wallpaperPath}";
+          picture-options = "zoom";
+        };
+        "org/gnome/desktop/screensaver" = {
+          picture-uri = "file://${wallpaperPath}";
+        };
+
+        "org/gnome/shell" = {
+          disable-user-extensions = false;
+          enabled-extensions = [
+            "just-perfection-desktop@just-perfection"
+            "blur-my-shell@aunetx"
+          ];
         };
       };
     }
@@ -63,6 +95,5 @@
     xclip
     gnomeExtensions.just-perfection
     gnomeExtensions.blur-my-shell
-    gnomeExtensions.appindicator
   ];
 }
