@@ -1,7 +1,5 @@
 # network.nix
 {
-  config,
-  pkgs,
   lib,
   ...
 }:

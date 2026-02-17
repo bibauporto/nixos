@@ -1,7 +1,4 @@
 {
-  config,
-  lib,
-  pkgs,
   ...
 }:
 
@@ -60,20 +57,22 @@
 
   zramSwap = {
     enable = true;
-    memoryPercent = 40; 
+    memoryPercent = 40;
     priority = 100;
   };
 
-  swapDevices = [{
-    device = "/persist/swap/swapfile";
-    priority = 0;
-  }];
+  swapDevices = [
+    {
+      device = "/persist/swap/swapfile";
+      priority = 0;
+    }
+  ];
 
   boot.kernel.sysctl = {
     "vm.swappiness" = 150;
     "vm.page-cluster" = 0;
 
-    "vm.vfs_cache_pressure" = 50; 
+    "vm.vfs_cache_pressure" = 50;
     "fs.inotify.max_user_watches" = 524288;
 
     "vm.watermark_boost_factor" = 0;

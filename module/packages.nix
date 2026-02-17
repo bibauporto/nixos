@@ -1,7 +1,5 @@
 {
-  config,
   pkgs,
-  lib,
   ...
 }:
 
@@ -35,6 +33,7 @@
 
     # Nix
     nixfmt
+    nixd
     direnv
   ];
 
