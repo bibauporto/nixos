@@ -60,9 +60,9 @@ let
   '';
 
   # Read local files
-  initLua = builtins.readFile ../files/nvim/init.lua;
-  keymapsLua = builtins.readFile ../files/nvim/keymaps.lua;
-  basharLua = builtins.readFile ../files/nvim/colors/bashar.lua;
+  initLua = builtins.readFile ../../files/nvim/init.lua;
+  keymapsLua = builtins.readFile ../../files/nvim/keymaps.lua;
+  basharLua = builtins.readFile ../../files/nvim/colors/bashar.lua;
 
 in
 {

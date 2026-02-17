@@ -72,25 +72,10 @@
         name = "bibauporto";
         email = "pedroleal2651@gmail.com";
       };
-      # Optional: Good for modern Git repos
       init.defaultBranch = "main";
-      # Automatically handle some line ending issues
       core.autocrlf = "input";
     };
   };
 
   virtualisation.docker.enable = true;
-
-  users.users.LEA = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "input"
-      "uinput"
-      "docker"
-    ];
-    shell = pkgs.fish;
-  };
 }

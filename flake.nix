@@ -7,7 +7,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
-
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -39,7 +38,7 @@
           inputs.lanzaboote.nixosModules.lanzaboote
 
           ./configuration.nix
-          ./module/cache-settings.nix
+          ./module/core/cache-settings.nix
         ];
       };
     };

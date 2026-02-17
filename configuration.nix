@@ -6,19 +6,19 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./module/filesystem.nix
-    ./module/boot.nix
-    ./module/keyboard.nix
-    ./module/persistence.nix
-    ./module/desktop.nix
-    ./module/packages.nix
-    ./module/kanata.nix
-    ./module/rclone.nix
-    ./module/network.nix
-    ./module/gc.nix
-    ./module/nvim.nix
-    ./module/fonts.nix
-    ./module/libraries.nix
+    ./module/core/filesystem.nix
+    ./module/core/boot.nix
+    ./module/hardware/keyboard.nix
+    ./module/core/persistence.nix
+    ./module/desktop/desktop.nix
+    ./module/programs/packages.nix
+    ./module/hardware/kanata.nix
+    ./module/programs/rclone.nix
+    ./module/core/network.nix
+    ./module/core/gc.nix
+    ./module/programs/nvim.nix
+    ./module/desktop/fonts.nix
+    ./module/libs/libraries.nix
   ];
 
   # Nix Settings
@@ -44,7 +44,12 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "video"
+      "input"
+      "uinput"
+      "docker"
     ];
+    shell = pkgs.fish;
     # Using your existing hashed password
     hashedPassword = "$6$duZBUtU4Y1zhdPJ7$zaSbKAIRbGfDIRxeCzv1BjfmrGCIQiwAFdzn13BWv1fb/L2Sp2DGfe69JKynD4eLf8pB85GPLRwRT4ErIj5k41";
   };
