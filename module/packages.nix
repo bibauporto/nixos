@@ -58,6 +58,7 @@
       nupdate = "nix flake update";
       nlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
       ntmp = "sudo du -hx / --max-depth=5";
+      ndel = "sudo nix-collect-garbage -d";
 
       ls = "ls --color=auto";
       ll = "ls -lh";
