@@ -41,6 +41,7 @@
   users.mutableUsers = false;
   users.users.LEA = {
     isNormalUser = true;
+    description = "LEA";
     extraGroups = [
       "wheel"
       "networkmanager"
