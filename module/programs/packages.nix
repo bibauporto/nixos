@@ -23,6 +23,7 @@
     microsoft-edge
 
     # Development
+    alacritty
     vscode
     opencode
     go

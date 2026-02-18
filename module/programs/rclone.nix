@@ -4,7 +4,7 @@ let
   cacheMaxSize = "800G";
   cacheMinFree = "50G";
   remoteName = "onedrive";
-  mountPath = "/home/LEA/OneDrive";
+  mountPath = "/home/lea/OneDrive";
 in
 {
   environment.systemPackages = [
@@ -56,5 +56,5 @@ in
   };
 
   # Ensure the user service starts on boot
-  users.users.LEA.linger = true;
+  users.users.lea.linger = true;
 }
