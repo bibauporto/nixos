@@ -5,13 +5,14 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # Support
+    # Misc
     unzip
 
     # Apps
     btop
     wpsoffice
     antigravity
+    vlc
 
     # Version Control & Cloud
     gh
