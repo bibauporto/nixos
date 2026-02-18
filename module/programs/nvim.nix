@@ -80,30 +80,6 @@ in
         defaultEditor = true;
         viAlias = true;
         vimAlias = true;
-        withNodeJs = true;
-        withPython3 = true;
-
-        extraPackages = with pkgs; [
-          git
-          lazygit
-          ripgrep
-          fd
-          fzf
-
-          # --- THE FIX STARTS HERE ---
-          luarocks # Required for plugins using rocks.nvim or lazy rocks
-          tree-sitter # The CLI tool for managing parsers
-          gcc # Ensure a C compiler is present for building parsers
-          gnumake # Essential for building almost any native lua rock
-          python3 # Often required by provider-based plugins
-          # ---------------------------
-
-          cargo
-          unzip
-          lua-language-server
-          stylua
-          shfmt
-        ];
       };
 
       # Write configuration files

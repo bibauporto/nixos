@@ -7,6 +7,7 @@
   environment.systemPackages = with pkgs; [
     # Misc
     unzip
+    openssl_3
 
     # Apps
     btop
@@ -27,7 +28,15 @@
     go
     bun
     nodejs_25
-    openssl_3
+    lazygit
+    ripgrep
+    fd
+    fzf
+    luarocks
+    tree-sitter
+    gcc
+    gnumake
+    cargo
 
     # Required for your fish config
     fastfetch
