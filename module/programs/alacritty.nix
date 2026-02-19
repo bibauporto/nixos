@@ -38,5 +38,13 @@
       };
     };
 
+"org/gnome/desktop/applications/terminal" = {
+  exec = "alacritty";
+
+home.sessionVariables = {
+    TERMINAL = "alacritty";
+  };
+};
+
   };
 }
