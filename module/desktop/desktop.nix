@@ -80,12 +80,12 @@ in
     gnome-contacts
     gnome-weather
     gnome-tour
+    gnome-console
   ];
 
   environment.systemPackages = with pkgs; [
     nautilus
     gnome-text-editor
-    gnome-console
     gnome-calculator
     loupe
     gnome-tweaks

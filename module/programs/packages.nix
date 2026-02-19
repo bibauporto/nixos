@@ -12,6 +12,7 @@
     # Apps
     btop
     wpsoffice
+    onlyoffice-desktopeditors
     antigravity
     vlc
 
