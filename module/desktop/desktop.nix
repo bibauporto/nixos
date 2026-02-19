@@ -19,7 +19,7 @@ in
 
   # 1. Enable dconf
   programs.dconf.enable = true;
-  
+
   # 2. GNOME Declarative Configuration
   programs.dconf.profiles.user.databases = [
     {
@@ -64,6 +64,26 @@ in
 
   # 4. Force Wayland for crisp Electron apps
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  # 5. XDG Terminal Exec & Portals
+  xdg.terminal-exec = {
+    enable = true;
+    package = pkgs.xdg-terminal-exec;
+    settings = {
+      default = [ "Alacritty.desktop" ];
+      GNOME = [ "Alacritty.desktop" ];
+    };
+  };
+  # not sure if this is needed
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-gnome
+    ];
+    config.common.default = [ "gtk" ];
+  };
 
   ##############################
   # GNOME Slimming
