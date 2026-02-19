@@ -19,7 +19,7 @@ in
 
   # 1. Enable dconf
   programs.dconf.enable = true;
-
+  
   # 2. GNOME Declarative Configuration
   programs.dconf.profiles.user.databases = [
     {
@@ -84,8 +84,8 @@ in
 
   environment.systemPackages = with pkgs; [
     nautilus
-    gnome-console
     gnome-text-editor
+    gnome-console
     gnome-calculator
     loupe
     gnome-tweaks

@@ -17,6 +17,7 @@
     ./module/core/network.nix
     ./module/core/gc.nix
     ./module/programs/nvim.nix
+    ./module/programs/alacritty.nix
     ./module/desktop/fonts.nix
     ./module/libs/libraries.nix
   ];
