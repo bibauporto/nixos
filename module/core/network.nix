@@ -5,6 +5,9 @@
 }:
 
 {
+services.sshd.enable = true;
+
+
   # Networking configuration
   networking.hostName = "lea-pc";
   networking.useDHCP = lib.mkDefault false;
