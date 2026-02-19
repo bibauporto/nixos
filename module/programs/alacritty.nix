@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  home-manager.users.LEA = { pkgs, ... }: { # Added pkgs here
+  home-manager.users.LEA = { pkgs, ... }: { 
     programs.alacritty = {
       enable = true;
       settings = {
