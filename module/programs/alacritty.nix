@@ -1,18 +1,16 @@
 { ... }:
 
 {
-  home-manager.users.LEA = {
+  home-manager.users.LEA = { pkgs, ... }: { # Added pkgs here
     programs.alacritty = {
       enable = true;
       settings = {
         window.startup_mode = "Fullscreen";
-
         colors = {
           primary = {
             background = "#000000";
             foreground = "#abb2bf";
           };
-
           normal = {
             black = "#000000";
             red = "#e40101";
@@ -23,7 +21,6 @@
             cyan = "#00AAAA";
             white = "#cccccc";
           };
-
           bright = {
             black = "#525252";
             red = "#e40101";
@@ -38,13 +35,16 @@
       };
     };
 
-"org/gnome/desktop/applications/terminal" = {
-  exec = "alacritty";
+    
+    dconf.settings = {
+      "org/gnome/desktop/applications/terminal" = {
+        exec = "alacritty";
+      };
+    };
 
-home.sessionVariables = {
-    TERMINAL = "alacritty";
-  };
-};
-
+    
+    home.sessionVariables = {
+      TERMINAL = "alacritty";
+    };
   };
 }
