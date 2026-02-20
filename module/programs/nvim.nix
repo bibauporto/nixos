@@ -71,7 +71,7 @@ in
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.LEA =
+  home-manager.users.lea =
     { pkgs, ... }:
     {
       home.stateVersion = "25.11";
