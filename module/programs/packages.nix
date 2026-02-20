@@ -21,7 +21,7 @@
     rclone
 
     # Browsers
-    microsoft-edge
+    stable.microsoft-edge
 
     # Development
     vscode
