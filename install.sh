@@ -17,10 +17,15 @@ fi
 # Secure Boot (sbctl) Pre-check
 ########################################
 echo "--- Checking Secure Boot status ---"
-# Check if system is in Setup Mode for key enrollment
-if ! nix-shell -p sbctl --run "sbctl status" | grep -q "Setup Mode:             Enabled"; then
-    echo "❌ Error: System is not in Setup Mode."
-    echo "Please enter BIOS and clear/reset Secure Boot keys to 'Setup Mode'."
+
+# More resilient check: looks for 'Enabled' on the 'Setup Mode' line regardless of symbols
+if ! nix-shell -p sbctl --run "sbctl status" | grep "Setup Mode" | grep -qi "Enabled"; then
+    echo "❌ Error: sbctl does not detect Setup Mode."
+    echo "Current Status:"
+    nix-shell -p sbctl --run "sbctl status"
+    echo "--------------------------------------------------------"
+    echo "Please enter BIOS and 'Clear' or 'Delete' the Platform Key (PK)."
+    echo "Simply 'Resetting to Default' often leaves it in User Mode."
     exit 1
 fi
 
@@ -65,6 +70,7 @@ umount /mnt
 # 4. Mount layout (tmpfs root)
 ########################################
 echo "--- Setting up tmpfs root and mounts ---"
+# 2GB for root is plenty for impermanence
 mount -t tmpfs -o size=2G,mode=755 tmpfs /mnt
 mkdir -p /mnt/{boot,nix,persist,etc,var/lib}
 
@@ -76,19 +82,30 @@ mount -o subvol=persist,compress=zstd,noatime /dev/mapper/cryptroot /mnt/persist
 # 5. Secure Boot Keys (Lanzaboote)
 ########################################
 echo "--- Initializing Secure Boot Keys ---"
-# Create keys and enroll them with Microsoft's signatures (-m)
+
+# Create the folder on the Live ISO first so sbctl has a physical target
+mkdir -p /etc/secureboot
+
+# Run creation and enrollment
 nix-shell -p sbctl --run "sbctl create-keys && sbctl enroll-keys -m"
 
+# Verify keys exist before copying
+if [ ! -f "/etc/secureboot/GUID" ]; then
+    echo "❌ Error: Secure Boot keys were not generated!"
+    exit 1
+fi
+
 # Move keys to /persist for Impermanence persistence
+# Using '.' ensures we copy all contents even if hidden
 mkdir -p /mnt/persist/etc/secureboot
-cp -r /etc/secureboot/* /mnt/persist/etc/secureboot/
+cp -rp /etc/secureboot/. /mnt/persist/etc/secureboot/
 
 mkdir -p /mnt/persist/var/lib/sbctl
 if [ -d "/var/lib/sbctl" ]; then
-    cp -r /var/lib/sbctl/* /mnt/persist/var/lib/sbctl/
+    cp -rp /var/lib/sbctl/. /mnt/persist/var/lib/sbctl/
 fi
 
-# Link back to standard paths so the installer finds them
+# Create symlinks for the installer to find the keys
 ln -snf /persist/etc/secureboot /mnt/etc/secureboot
 ln -snf /persist/var/lib/sbctl /mnt/var/lib/sbctl
 
@@ -108,7 +125,7 @@ swapon /mnt/persist/swap/swapfile
 # 7. Generate & Overwrite hardware configuration
 ########################################
 echo "--- Configuring hardware-configuration.nix ---"
-# Overwrite generated config with your specific requirements
+# Explicitly overwriting to remove auto-generated partitions/swap
 cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
 { config, lib, pkgs, modulesPath, ... }: 
 { 
@@ -123,6 +140,10 @@ cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
     device = "${DISK}p2"; 
     preLVM = true; 
   };
+
+  networking.useDHCP = lib.mkDefault true;
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
 EOF
 
@@ -141,6 +162,7 @@ echo "✅ System prepared for installation."
 read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
+    echo "Installation finished! Exit Setup Mode in BIOS before booting."
 else
-    echo "Aborted. System remains mounted at /mnt."
+    echo "Aborted."
 fi
