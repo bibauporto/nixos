@@ -14,145 +14,116 @@ if [ ! -d "/sys/firmware/efi/efivars" ]; then
 fi
 
 ########################################
+# Secure Boot (sbctl) Pre-check
+########################################
+echo "--- Checking Secure Boot status ---"
+# We use nix-shell to access sbctl without pre-installing it on the ISO
+if ! nix-shell -p sbctl --run "sbctl status" | grep -q "Setup Mode:             Enabled"; then
+    echo "❌ Error: System is not in Setup Mode."
+    echo "Please enter BIOS and clear/reset Secure Boot keys to 'Setup Mode'."
+    exit 1
+fi
+
+########################################
 # Disk and Hostname settings
 ########################################
 export DISK="/dev/nvme0n1"
 export HOSTNAME="lea"
-
-# Flake source (mounted USB or external drive)
-# Ensure this matches where your flake is actually located
+# Ensure this matches your actual USB/Source path
 export FLAKE_SRC="/run/media/nixos/DISK"
 
 ########################################
 # 1. Partition disk
 ########################################
-
-echo "Partitioning disk $DISK..."
-# Zap existing partitions to avoid conflicts
+echo "--- Partitioning disk $DISK ---"
 wipefs -a "$DISK"
-
 parted --script "$DISK" \
     mklabel gpt \
     mkpart ESP fat32 1MiB 2049MiB \
     set 1 esp on \
     mkpart primary 2049MiB 100%
 
-echo "Formatting ESP partition as FAT32..."
+echo "Formatting ESP partition..."
 mkfs.fat -F32 -n boot "${DISK}p1"
 
 ########################################
 # 2. LUKS Encryption
 ########################################
-
-echo "Setting up LUKS encryption on ${DISK}p2..."
-# This will prompt for your passphrase
+echo "--- Setting up LUKS encryption ---"
 cryptsetup luksFormat --type luks2 "${DISK}p2"
 cryptsetup open "${DISK}p2" cryptroot
 
 ########################################
 # 3. Create BTRFS filesystem and subvolumes
 ########################################
-
-echo "Creating BTRFS filesystem..."
+echo "--- Creating BTRFS subvolumes ---"
 mkfs.btrfs -L nixos -f /dev/mapper/cryptroot
-
-echo "Mounting encrypted partition (temporary)..."
 mount -t btrfs /dev/mapper/cryptroot /mnt
-
-echo "Creating BTRFS subvolumes..."
 btrfs subvolume create /mnt/nix
 btrfs subvolume create /mnt/persist
-
 umount /mnt
 
 ########################################
 # 4. Mount layout (tmpfs root)
 ########################################
-
-echo "Mounting tmpfs root..."
-# 8GB is sufficient for root on a 16GB RAM system
+echo "--- Setting up tmpfs root and mounts ---"
 mount -t tmpfs -o size=8G,mode=755 tmpfs /mnt
+mkdir -p /mnt/{boot,nix,persist,etc,var/lib}
 
-echo "Creating mount directories..."
-mkdir -p /mnt/{boot,nix,persist,etc/nixos}
-
-echo "Mounting ESP to /mnt/boot..."
 mount "${DISK}p1" /mnt/boot
-
-echo "Mounting BTRFS subvolumes..."
 mount -o subvol=nix,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
 mount -o subvol=persist,compress=zstd,noatime /dev/mapper/cryptroot /mnt/persist
 
 ########################################
-# 5. Set up Swapfile (Btrfs-safe Fixes)
+# 5. Secure Boot Keys (Lanzaboote)
 ########################################
+echo "--- Initializing Secure Boot Keys ---"
+# Create keys and enroll them with Microsoft's signatures (-m)
+nix-shell -p sbctl --run "sbctl create-keys && sbctl enroll-keys -m"
 
-echo "Creating Btrfs-optimized swapfile in /persist/swap..."
+# Move keys to /persist so Lanzaboote can find them after reboot
+mkdir -p /mnt/persist/etc/secureboot
+cp -r /etc/secureboot/* /mnt/persist/etc/secureboot/
+
+# Move sbctl database to /persist/var/lib/sbctl
+mkdir -p /mnt/persist/var/lib/sbctl
+if [ -d "/var/lib/sbctl" ]; then
+    cp -r /var/lib/sbctl/* /mnt/persist/var/lib/sbctl/
+fi
+
+# Create symlinks so the installer sees them at standard paths
+ln -s /persist/etc/secureboot /mnt/etc/secureboot
+ln -s /persist/var/lib/sbctl /mnt/var/lib/sbctl
+
+########################################
+# 6. Set up Swapfile (No-CoW)
+########################################
+echo "--- Creating 16GB Btrfs-safe swapfile ---"
 mkdir -p /mnt/persist/swap
-
-# Ensure the file is clean
-rm -f /mnt/persist/swap/swapfile
-truncate -s 0 /mnt/persist/swap/swapfile
-
-# Strip compression property to allow No-CoW
-btrfs property set /mnt/persist/swap/swapfile compression ""
-
-# Apply No-Copy-on-Write (+C)
+touch /mnt/persist/swap/swapfile
+# Strip compression and apply No-Copy-on-Write
 chattr +C /mnt/persist/swap/swapfile
-
-# Set permissions (Root only)
-chmod 0600 /mnt/persist/swap/swapfile
-
-# Allocate 16GB using fallocate (faster than dd)
-echo "Allocating 16GB swap space..."
 fallocate -l 16G /mnt/persist/swap/swapfile
-
-# Format and activate immediately
+chmod 0600 /mnt/persist/swap/swapfile
 mkswap /mnt/persist/swap/swapfile
 swapon /mnt/persist/swap/swapfile
 
 ########################################
-# 6. Copy Flake to /persist
+# 7. Copy Flake & Install
 ########################################
-
-echo "Copying flake configuration to /mnt/persist..."
+echo "--- Copying Flake configuration ---"
 mkdir -p /mnt/persist/etc/nixos
 if [ -d "$FLAKE_SRC" ]; then
     cp -rv "$FLAKE_SRC/nixos/"* /mnt/persist/etc/nixos/
-else
-    echo "Warning: FLAKE_SRC ($FLAKE_SRC) not found."
-    echo "Please copy your flake manually to /mnt/persist/etc/nixos before proceeding."
 fi
 
-########################################
-# 7. Bind mount flake into tmpfs root
-########################################
-
-echo "Binding persistent nixos config into tmpfs root..."
+# Bind mount for the installer to find the flake at /etc/nixos
 mount --bind /mnt/persist/etc/nixos /mnt/etc/nixos
 
-########################################
-# 8. Generate hardware configuration
-########################################
-
-echo "Generating hardware configuration..."
-nixos-generate-config --root /mnt
-
-echo "Cleaning generated config..."
-# Removing redundant filesystem/swap definitions to prioritize your manual module
-sed -i '/fileSystems\./d' /mnt/etc/nixos/hardware-configuration.nix
-sed -i '/swapDevices/d' /mnt/etc/nixos/hardware-configuration.nix
-
-echo
-echo "✅ Disk prepared for LEA-PC."
-echo "👉 Btrfs Swap: Enabled (No-CoW, 16GB)"
-echo "👉 Impermanence: Ready (tmpfs root)"
-echo
-
-read -p "Ready to install? (y/N) " confirm
-if [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]]; then
-    echo "Installing NixOS..."
-    nixos-install --flake /mnt/persist/etc/nixos#lea-pc
+echo "✅ Ready to install NixOS with Secure Boot (Lanzaboote)."
+read -p "Begin installation? (y/N): " confirm
+if [[ $confirm == [yY] ]]; then
+    nixos-install --flake /mnt/etc/nixos#lea-pc
 else
-    echo "Installation aborted. Filesystem remains mounted at /mnt."
+    echo "Aborted. Filesystem is still mounted at /mnt."
 fi
