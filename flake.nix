@@ -9,6 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -16,7 +17,7 @@
   };
 
   outputs =
-    { self, nixpkgs, nixpkgs-stable, ... }@inputs: 
+    { self, nixpkgs, nixpkgs-stable, ... }@inputs:
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -25,8 +26,19 @@
             { pkgs, ... }:
             {
               nixpkgs.hostPlatform = "x86_64-linux";
-              nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
-              boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+              
+              
+              nixpkgs.overlays = [ 
+                inputs.nix-cachyos-kernel.overlays.pinned 
+                (final: prev: {
+                  stable = import inputs.nixpkgs-stable {
+                    system = prev.system;
+                    config.allowUnfree = true;
+                  };
+                })
+              ];
+
+              
             }
           )
 
