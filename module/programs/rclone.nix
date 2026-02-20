@@ -56,5 +56,5 @@ in
   };
 
   # Ensure the user service starts on boot
-  users.users.LEA.linger = true;
+  users.users.lea.linger = true;
 }
