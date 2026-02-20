@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  home-manager.users.LEA =
+  home-manager.users.lea =
     { pkgs, ... }:
     {
       programs.alacritty = {
