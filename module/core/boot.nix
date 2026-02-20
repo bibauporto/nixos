@@ -17,7 +17,7 @@ boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
 
     lanzaboote = {
       enable = true;
-      pkiBundle = "/var/lib/sbctl";
+      pkiBundle = "/etc/secureboot"; 
     };
 
     # TPM2 & Silent Boot
