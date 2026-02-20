@@ -4,7 +4,7 @@ let
   cacheMaxSize = "800G";
   cacheMinFree = "50G";
   remoteName = "onedrive";
-  mountPath = "/home/LEA/OneDrive";
+  mountPath = "/home/lea/OneDrive";
 in
 {
   environment.systemPackages = [
@@ -45,7 +45,7 @@ in
           --dir-cache-time 9999h \
           --poll-interval 15s \
           --log-level INFO \
-          --log-file /home/LEA/.rclone-onedrive.log \
+          --log-file /home/lea/.cache/.rclone-onedrive.log \
           --allow-other
       '';
 
