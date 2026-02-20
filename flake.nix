@@ -1,6 +1,8 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11"; 
+
     impermanence.url = "github:nix-community/impermanence";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -14,7 +16,7 @@
   };
 
   outputs =
-    { self, nixpkgs, ... }@inputs:
+    { self, nixpkgs, nixpkgs-stable, ... }@inputs: 
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -23,14 +25,8 @@
             { pkgs, ... }:
             {
               nixpkgs.hostPlatform = "x86_64-linux";
-
-              # 1. Apply the CachyOS Overlay
               nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned ];
-
-              # 2. Configure the Kernel
-              # Choose 'latest', 'lts', or a specific variant like 'bore'
               boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
-
             }
           )
 
