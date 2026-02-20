@@ -11,6 +11,7 @@
       "/etc/NetworkManager/system-connections"
 
       "/var/lib/docker" # Docker
+"/etc/secureboot" #Lanzaboot
       "/var/lib/sbctl" # Lanzaboot
       "/var/lib/flatpak" # Flatpak
     ];
