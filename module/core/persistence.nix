@@ -17,7 +17,7 @@
     files = [
       "/etc/machine-id"
     ];
-    users.LEA.directories = [
+    users.lea.directories = [
       "Documents"
       "Downloads"
       "Code"
