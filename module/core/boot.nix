@@ -1,10 +1,13 @@
 {
   lib,
+pkgs, 
   ...
 }:
 
 {
   boot = {
+boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+
     # CachyOs is configured on the flake.nix
     # This is the fallback
     # kernelPackages = pkgs.linuxPackages_latest;
