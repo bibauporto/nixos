@@ -17,7 +17,7 @@ fi
 # Secure Boot (sbctl) Pre-check
 ########################################
 echo "--- Checking Secure Boot status ---"
-# We use nix-shell to access sbctl without pre-installing it on the ISO
+# Check if system is in Setup Mode for key enrollment
 if ! nix-shell -p sbctl --run "sbctl status" | grep -q "Setup Mode:             Enabled"; then
     echo "❌ Error: System is not in Setup Mode."
     echo "Please enter BIOS and clear/reset Secure Boot keys to 'Setup Mode'."
@@ -29,7 +29,6 @@ fi
 ########################################
 export DISK="/dev/nvme0n1"
 export HOSTNAME="lea"
-# Ensure this matches your actual USB/Source path
 export FLAKE_SRC="/run/media/nixos/DISK"
 
 ########################################
@@ -43,7 +42,6 @@ parted --script "$DISK" \
     set 1 esp on \
     mkpart primary 2049MiB 100%
 
-echo "Formatting ESP partition..."
 mkfs.fat -F32 -n boot "${DISK}p1"
 
 ########################################
@@ -67,7 +65,7 @@ umount /mnt
 # 4. Mount layout (tmpfs root)
 ########################################
 echo "--- Setting up tmpfs root and mounts ---"
-mount -t tmpfs -o size=8G,mode=755 tmpfs /mnt
+mount -t tmpfs -o size=2G,mode=755 tmpfs /mnt
 mkdir -p /mnt/{boot,nix,persist,etc,var/lib}
 
 mount "${DISK}p1" /mnt/boot
@@ -81,19 +79,18 @@ echo "--- Initializing Secure Boot Keys ---"
 # Create keys and enroll them with Microsoft's signatures (-m)
 nix-shell -p sbctl --run "sbctl create-keys && sbctl enroll-keys -m"
 
-# Move keys to /persist so Lanzaboote can find them after reboot
+# Move keys to /persist for Impermanence persistence
 mkdir -p /mnt/persist/etc/secureboot
 cp -r /etc/secureboot/* /mnt/persist/etc/secureboot/
 
-# Move sbctl database to /persist/var/lib/sbctl
 mkdir -p /mnt/persist/var/lib/sbctl
 if [ -d "/var/lib/sbctl" ]; then
     cp -r /var/lib/sbctl/* /mnt/persist/var/lib/sbctl/
 fi
 
-# Create symlinks so the installer sees them at standard paths
-ln -s /persist/etc/secureboot /mnt/etc/secureboot
-ln -s /persist/var/lib/sbctl /mnt/var/lib/sbctl
+# Link back to standard paths so the installer finds them
+ln -snf /persist/etc/secureboot /mnt/etc/secureboot
+ln -snf /persist/var/lib/sbctl /mnt/var/lib/sbctl
 
 ########################################
 # 6. Set up Swapfile (No-CoW)
@@ -101,15 +98,36 @@ ln -s /persist/var/lib/sbctl /mnt/var/lib/sbctl
 echo "--- Creating 16GB Btrfs-safe swapfile ---"
 mkdir -p /mnt/persist/swap
 touch /mnt/persist/swap/swapfile
-# Strip compression and apply No-Copy-on-Write
-chattr +C /mnt/persist/swap/swapfile
+chattr +C /mnt/persist/swap/swapfile # Disable Copy-on-Write
 fallocate -l 16G /mnt/persist/swap/swapfile
 chmod 0600 /mnt/persist/swap/swapfile
 mkswap /mnt/persist/swap/swapfile
 swapon /mnt/persist/swap/swapfile
 
 ########################################
-# 7. Copy Flake & Install
+# 7. Generate & Overwrite hardware configuration
+########################################
+echo "--- Configuring hardware-configuration.nix ---"
+# Overwrite generated config with your specific requirements
+cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
+{ config, lib, pkgs, modulesPath, ... }: 
+{ 
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ]; 
+
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ]; 
+  boot.initrd.kernelModules = [ ]; 
+  boot.kernelModules = [ "kvm-intel" ]; 
+  boot.extraModulePackages = [ ]; 
+
+  boot.initrd.luks.devices.cryptroot = { 
+    device = "${DISK}p2"; 
+    preLVM = true; 
+  };
+}
+EOF
+
+########################################
+# 8. Copy Flake & Install
 ########################################
 echo "--- Copying Flake configuration ---"
 mkdir -p /mnt/persist/etc/nixos
@@ -117,13 +135,12 @@ if [ -d "$FLAKE_SRC" ]; then
     cp -rv "$FLAKE_SRC/nixos/"* /mnt/persist/etc/nixos/
 fi
 
-# Bind mount for the installer to find the flake at /etc/nixos
 mount --bind /mnt/persist/etc/nixos /mnt/etc/nixos
 
-echo "✅ Ready to install NixOS with Secure Boot (Lanzaboote)."
-read -p "Begin installation? (y/N): " confirm
+echo "✅ System prepared for installation."
+read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
 else
-    echo "Aborted. Filesystem is still mounted at /mnt."
+    echo "Aborted. System remains mounted at /mnt."
 fi
