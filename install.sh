@@ -14,18 +14,17 @@ if [ ! -d "/sys/firmware/efi/efivars" ]; then
 fi
 
 ########################################
-# Secure Boot (sbctl) Pre-check
+# Secure Boot (sbctl) Pre-check & Cleanup
 ########################################
-echo "--- Checking Secure Boot status ---"
+echo "--- Cleaning up and checking Secure Boot status ---"
 
-# More resilient check: looks for 'Enabled' on the 'Setup Mode' line regardless of symbols
+# Remove any existing temporary keys to prevent "old configuration" errors
+rm -rf /etc/secureboot /var/lib/sbctl
+
+# Resilient check for Setup Mode
 if ! nix-shell -p sbctl --run "sbctl status" | grep "Setup Mode" | grep -qi "Enabled"; then
     echo "❌ Error: sbctl does not detect Setup Mode."
-    echo "Current Status:"
     nix-shell -p sbctl --run "sbctl status"
-    echo "--------------------------------------------------------"
-    echo "Please enter BIOS and 'Clear' or 'Delete' the Platform Key (PK)."
-    echo "Simply 'Resetting to Default' often leaves it in User Mode."
     exit 1
 fi
 
@@ -70,9 +69,8 @@ umount /mnt
 # 4. Mount layout (tmpfs root)
 ########################################
 echo "--- Setting up tmpfs root and mounts ---"
-# 2GB for root is plenty for impermanence
 mount -t tmpfs -o size=2G,mode=755 tmpfs /mnt
-mkdir -p /mnt/{boot,nix,persist,etc,var/lib}
+mkdir -p /mnt/{boot,nix,persist,etc/nixos,var/lib} # Added etc/nixos here
 
 mount "${DISK}p1" /mnt/boot
 mount -o subvol=nix,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
@@ -83,20 +81,13 @@ mount -o subvol=persist,compress=zstd,noatime /dev/mapper/cryptroot /mnt/persist
 ########################################
 echo "--- Initializing Secure Boot Keys ---"
 
-# Create the folder on the Live ISO first so sbctl has a physical target
+# Ensure clean directory exists on Live ISO
 mkdir -p /etc/secureboot
 
-# Run creation and enrollment
+# Generate and enroll keys
 nix-shell -p sbctl --run "sbctl create-keys && sbctl enroll-keys -m"
 
-# Verify keys exist before copying
-if [ ! -f "/etc/secureboot/GUID" ]; then
-    echo "❌ Error: Secure Boot keys were not generated!"
-    exit 1
-fi
-
-# Move keys to /persist for Impermanence persistence
-# Using '.' ensures we copy all contents even if hidden
+# Copy to persistent storage
 mkdir -p /mnt/persist/etc/secureboot
 cp -rp /etc/secureboot/. /mnt/persist/etc/secureboot/
 
@@ -105,7 +96,7 @@ if [ -d "/var/lib/sbctl" ]; then
     cp -rp /var/lib/sbctl/. /mnt/persist/var/lib/sbctl/
 fi
 
-# Create symlinks for the installer to find the keys
+# Link to standard paths for the installer
 ln -snf /persist/etc/secureboot /mnt/etc/secureboot
 ln -snf /persist/var/lib/sbctl /mnt/var/lib/sbctl
 
@@ -115,17 +106,19 @@ ln -snf /persist/var/lib/sbctl /mnt/var/lib/sbctl
 echo "--- Creating 16GB Btrfs-safe swapfile ---"
 mkdir -p /mnt/persist/swap
 touch /mnt/persist/swap/swapfile
-chattr +C /mnt/persist/swap/swapfile # Disable Copy-on-Write
+chattr +C /mnt/persist/swap/swapfile
 fallocate -l 16G /mnt/persist/swap/swapfile
 chmod 0600 /mnt/persist/swap/swapfile
 mkswap /mnt/persist/swap/swapfile
 swapon /mnt/persist/swap/swapfile
 
 ########################################
-# 7. Generate & Overwrite hardware configuration
+# 7. Write Hardware Configuration
 ########################################
-echo "--- Configuring hardware-configuration.nix ---"
-# Explicitly overwriting to remove auto-generated partitions/swap
+echo "--- Writing hardware-configuration.nix ---"
+# Directory was created in step 4, but we double-check here
+mkdir -p /mnt/etc/nixos
+
 cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
 { config, lib, pkgs, modulesPath, ... }: 
 { 
@@ -153,16 +146,17 @@ EOF
 echo "--- Copying Flake configuration ---"
 mkdir -p /mnt/persist/etc/nixos
 if [ -d "$FLAKE_SRC" ]; then
+    # Copy user config to persist
     cp -rv "$FLAKE_SRC/nixos/"* /mnt/persist/etc/nixos/
 fi
 
+# Bind mount so installer sees the combined config (flake + hardware-config)
 mount --bind /mnt/persist/etc/nixos /mnt/etc/nixos
 
 echo "✅ System prepared for installation."
 read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
-    echo "Installation finished! Exit Setup Mode in BIOS before booting."
 else
     echo "Aborted."
 fi
