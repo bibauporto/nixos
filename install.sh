@@ -18,7 +18,7 @@ fi
 ########################################
 echo "--- Cleaning up and checking Secure Boot status ---"
 
-# Remove any existing temporary keys to prevent "old configuration" errors
+# Proactively remove existing temporary keys to prevent "old configuration" errors
 rm -rf /etc/secureboot /var/lib/sbctl
 
 # Resilient check for Setup Mode
@@ -70,7 +70,9 @@ umount /mnt
 ########################################
 echo "--- Setting up tmpfs root and mounts ---"
 mount -t tmpfs -o size=2G,mode=755 tmpfs /mnt
-mkdir -p /mnt/{boot,nix,persist,etc/nixos,var/lib} # Added etc/nixos here
+
+# Ensure all mount directories exist before mounting subvolumes
+mkdir -p /mnt/{boot,nix,persist,etc/nixos,var/lib}
 
 mount "${DISK}p1" /mnt/boot
 mount -o subvol=nix,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
@@ -81,7 +83,7 @@ mount -o subvol=persist,compress=zstd,noatime /dev/mapper/cryptroot /mnt/persist
 ########################################
 echo "--- Initializing Secure Boot Keys ---"
 
-# Ensure clean directory exists on Live ISO
+# Ensure clean directory exists on Live ISO before running sbctl
 mkdir -p /etc/secureboot
 
 # Generate and enroll keys
@@ -116,7 +118,8 @@ swapon /mnt/persist/swap/swapfile
 # 7. Write Hardware Configuration
 ########################################
 echo "--- Writing hardware-configuration.nix ---"
-# Directory was created in step 4, but we double-check here
+
+# Explicitly create the path to avoid "No such file or directory" errors
 mkdir -p /mnt/etc/nixos
 
 cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
@@ -134,9 +137,6 @@ cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
     preLVM = true; 
   };
 
-  networking.useDHCP = lib.mkDefault true;
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
 EOF
 
@@ -146,14 +146,21 @@ EOF
 echo "--- Copying Flake configuration ---"
 mkdir -p /mnt/persist/etc/nixos
 if [ -d "$FLAKE_SRC" ]; then
-    # Copy user config to persist
     cp -rv "$FLAKE_SRC/nixos/"* /mnt/persist/etc/nixos/
 fi
 
 # Bind mount so installer sees the combined config (flake + hardware-config)
 mount --bind /mnt/persist/etc/nixos /mnt/etc/nixos
 
-echo "✅ System prepared for installation."
+echo "✅ System prepared. Checking internet for flake update..."
+# Check for internet before trying to update, as seen in error
+if ping -c 1 github.com &> /dev/null; then
+    cd /mnt/etc/nixos && nix flake update --extra-experimental-features 'nix-command flakes'
+else
+    echo "⚠️ No internet detected. Flake update skipped. Proceeding with existing lockfile."
+fi
+
+echo "🚀 Ready to install."
 read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
