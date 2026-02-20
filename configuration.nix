@@ -40,7 +40,7 @@
 
   # User Configuration
   users.mutableUsers = false;
-  users.users.LEA = {
+  users.users.lea = {
     isNormalUser = true;
     description = "LEA";
     extraGroups = [
