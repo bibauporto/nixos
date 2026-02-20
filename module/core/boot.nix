@@ -6,11 +6,11 @@ pkgs,
 
 {
   boot = {
-boot.kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
 
-    # CachyOs is configured on the flake.nix
-    # This is the fallback
-    # kernelPackages = pkgs.linuxPackages_latest;
+
+# kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+
+    kernelPackages = pkgs.linuxPackages_latest;
     loader.timeout = 0;
     loader.efi.canTouchEfiVariables = true;
     loader.systemd-boot.enable = lib.mkForce false;
