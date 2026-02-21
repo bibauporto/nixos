@@ -135,8 +135,16 @@ cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
     preLVM = true; 
   };
 
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
 EOF
+
+# Copy generated hardware-configuration.nix to flake source
+if [ -d "$FLAKE_SRC/nixos" ]; then
+    echo "--- Updating hardware-configuration.nix in source ---"
+    cp -f /mnt/etc/nixos/hardware-configuration.nix "$FLAKE_SRC/nixos/hardware-configuration.nix"
+fi
 
 ########################################
 # 8. Copy Flake & Install
@@ -155,6 +163,20 @@ echo "✅ System prepared for installation."
 read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
+
+    # Copy back flake.lock to source
+    if [ -d "$FLAKE_SRC/nixos" ]; then
+        echo "--- Updating flake.lock in source ---"
+        cp -f /mnt/etc/nixos/flake.lock "$FLAKE_SRC/nixos/flake.lock"
+    fi
+
+    echo "✅ installation complete."
+    read -p "Do you wish to unmount /mnt and reboot? (y/N): " reboot_confirm
+    if [[ $reboot_confirm == [yY] ]]; then
+        echo "--- Unmounting and rebooting ---"
+        umount -R /mnt
+        reboot
+    fi
 else
     echo "Aborted."
 fi

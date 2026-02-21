@@ -15,14 +15,14 @@
     #onlyoffice-desktopeditors
     #antigravity
     vlc
-    stable.stremio
+    legacy.stremio
 
     # Version Control & Cloud
     gh
     rclone
 
     # Browsers
-    stable.microsoft-edge
+    microsoft-edge
 
     # Development
     vscode
