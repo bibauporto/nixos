@@ -121,6 +121,7 @@ echo "--- Writing hardware-configuration.nix ---"
 
 # Explicitly create the path to avoid "No such file or directory" errors
 mkdir -p /mnt/etc/nixos
+nixos-generate-config --root /mnt
 
 cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
 { config, lib, pkgs, modulesPath, ... }: 
