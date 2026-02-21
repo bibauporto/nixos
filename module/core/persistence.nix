@@ -15,8 +15,8 @@
 
       # Lanzaboot
       "/etc/secureboot"
-      "/var/lib/sbctl" 
-      
+      "/var/lib/sbctl"
+
       # FLATPAK
       # "/var/lib/flatpak"
     ];
@@ -37,7 +37,7 @@
 
       # APPs
       # ".antigravity"
-      # ".gemini"
+      ".gemini" # used for vscode gemini extension
       ".bun"
       ".vscode"
 

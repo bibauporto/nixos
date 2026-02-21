@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11"; 
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     impermanence.url = "github:nix-community/impermanence";
     home-manager = {
@@ -17,7 +17,12 @@
   };
 
   outputs =
-    { self, nixpkgs, nixpkgs-stable, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      nixpkgs-stable,
+      ...
+    }@inputs:
     {
       nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -26,18 +31,17 @@
             { pkgs, ... }:
             {
               nixpkgs.hostPlatform = "x86_64-linux";
-              
-              
-              nixpkgs.overlays = [ inputs.nix-cachyos-kernel.overlays.pinned
+
+              nixpkgs.overlays = [
+                inputs.nix-cachyos-kernel.overlays.pinned
                 (final: prev: {
                   stable = import inputs.nixpkgs-stable {
-                    system = prev.system;
+                    system = prev.stdenv.hostPlatform.system;
                     config.allowUnfree = true;
                   };
                 })
               ];
 
-              
             }
           )
 
