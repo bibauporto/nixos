@@ -49,7 +49,7 @@
     direnv
   ];
 
-  services.flatpak.enable = true;
+  # services.flatpak.enable = true;
 
   # All fish settings must be inside this block
   programs.fish = {

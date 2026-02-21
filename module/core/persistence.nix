@@ -10,10 +10,15 @@
       "/var/lib/nixos"
       "/etc/NetworkManager/system-connections"
 
+      # Docker
       "/var/lib/docker" # Docker
-      "/etc/secureboot" # Lanzaboot
-      "/var/lib/sbctl" # Lanzaboot
-      "/var/lib/flatpak" # Flatpak
+
+      # Lanzaboot
+      "/etc/secureboot"
+      "/var/lib/sbctl" 
+      
+      # FLATPAK
+      # "/var/lib/flatpak"
     ];
     files = [
       "/etc/machine-id"
@@ -27,25 +32,19 @@
       ".ssh"
       ".local/share"
 
-      ################
       # CACHE
       ".cache"
-      #################
 
-      ################
       # APPs
-      ".antigravity"
-      ".gemini"
+      # ".antigravity"
+      # ".gemini"
       ".bun"
       ".vscode"
-      ###############
 
-      ###############
       # FLATPAK
-      ".var/app"
-      ###############
+      # ".var/app"
 
-      ".gnupg"
+      # ".gnupg"
     ];
   };
 }
