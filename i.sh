@@ -17,11 +17,8 @@ fi
 # Secure Boot (sbctl) Pre-check & Cleanup
 ########################################
 echo "--- Cleaning up and checking Secure Boot status ---"
-
-# Remove any existing temporary keys to prevent "old configuration" errors
 rm -rf /etc/secureboot /var/lib/sbctl
 
-# Resilient check for Setup Mode
 if ! nix-shell -p sbctl --run "sbctl status" | grep "Setup Mode" | grep -qi "Enabled"; then
     echo "❌ Error: sbctl does not detect Setup Mode."
     nix-shell -p sbctl --run "sbctl status"
@@ -70,7 +67,7 @@ umount /mnt
 ########################################
 echo "--- Setting up tmpfs root and mounts ---"
 mount -t tmpfs -o size=2G,mode=755 tmpfs /mnt
-mkdir -p /mnt/{boot,nix,persist,etc/nixos,var/lib} # Added etc/nixos here
+mkdir -p /mnt/{boot,nix,persist,etc/nixos,var/lib}
 
 mount "${DISK}p1" /mnt/boot
 mount -o subvol=nix,compress=zstd,noatime /dev/mapper/cryptroot /mnt/nix
@@ -80,11 +77,7 @@ mount -o subvol=persist,compress=zstd,noatime /dev/mapper/cryptroot /mnt/persist
 # 5. Secure Boot Keys (Lanzaboote)
 ########################################
 echo "--- Initializing Secure Boot Keys ---"
-
-# Ensure clean directory exists on Live ISO
 mkdir -p /etc/secureboot
-
-# Generate and enroll keys
 nix-shell -p sbctl --run "sbctl create-keys && sbctl enroll-keys -m"
 
 # Copy to persistent storage
@@ -96,7 +89,7 @@ if [ -d "/var/lib/sbctl" ]; then
     cp -rp /var/lib/sbctl/. /mnt/persist/var/lib/sbctl/
 fi
 
-# Link to standard paths for the installer
+# Link for the installer environment
 ln -snf /persist/etc/secureboot /mnt/etc/secureboot
 ln -snf /persist/var/lib/sbctl /mnt/var/lib/sbctl
 
@@ -115,48 +108,40 @@ swapon /mnt/persist/swap/swapfile
 ########################################
 # 7. Write Hardware Configuration
 ########################################
-echo "--- Writing hardware-configuration.nix ---"
-# Directory was created in step 4, but we double-check here
-mkdir -p /mnt/etc/nixos
-sudo nixos-generate-config --root /mnt
+echo "--- Generating hardware-configuration.nix ---"
+nixos-generate-config --root /mnt
 
-cat <<EOF > /mnt/etc/nixos/hardware-configuration.nix
-{ config, lib, pkgs, modulesPath, ... }: 
-{ 
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ]; 
+# Clean up generated filesystems to avoid flake conflicts
+sed -i '/fileSystems\.".*" =/,/};/d' /mnt/etc/nixos/hardware-configuration.nix
+sed -i '/swapDevices =/,/\];/d' /mnt/etc/nixos/hardware-configuration.nix
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ]; 
-  boot.initrd.kernelModules = [ ]; 
-  boot.kernelModules = [ "kvm-intel" ]; 
-  boot.extraModulePackages = [ ]; 
-
-  boot.initrd.luks.devices.cryptroot = { 
-    device = "${DISK}p2"; 
-    preLVM = true; 
+# Robust injection of LUKS block
+# We remove the last '}' and append the block + '}' back
+head -n -1 /mnt/etc/nixos/hardware-configuration.nix > /tmp/hw_gen.nix
+cat <<EOF >> /tmp/hw_gen.nix
+  boot.initrd.luks.devices."cryptroot" = {
+    device = "${DISK}p2";
+    preLVM = true;
   };
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
 EOF
-
-# Copy generated hardware-configuration.nix to flake source
-if [ -d "$FLAKE_SRC/nixos" ]; then
-    echo "--- Updating hardware-configuration.nix in source ---"
-    cp -f /mnt/etc/nixos/hardware-configuration.nix "$FLAKE_SRC/nixos/hardware-configuration.nix"
-fi
+mv /tmp/hw_gen.nix /mnt/etc/nixos/hardware-configuration.nix
 
 ########################################
-# 8. Copy Flake & Install
+# 8. Sync Flake & Install
 ########################################
-echo "--- Copying Flake configuration ---"
+echo "--- Syncing Flake and hardware-config ---"
 mkdir -p /mnt/persist/etc/nixos
-if [ -d "$FLAKE_SRC" ]; then
-    # Copy user config to persist
+
+# Copy existing flake source if available
+if [ -d "$FLAKE_SRC/nixos" ]; then
     cp -rv "$FLAKE_SRC/nixos/"* /mnt/persist/etc/nixos/
 fi
 
-# Bind mount so installer sees the combined config (flake + hardware-config)
+# IMPORTANT: Move the generated hardware config into persist before bind mounting
+cp -f /mnt/etc/nixos/hardware-configuration.nix /mnt/persist/etc/nixos/hardware-configuration.nix
+
+# Bind mount persist/etc/nixos to /etc/nixos so the installer sees everything
 mount --bind /mnt/persist/etc/nixos /mnt/etc/nixos
 
 echo "✅ System prepared for installation."
@@ -164,16 +149,14 @@ read -p "Begin nixos-install? (y/N): " confirm
 if [[ $confirm == [yY] ]]; then
     nixos-install --flake /mnt/etc/nixos#lea-pc
 
-    # Copy back flake.lock to source
+    # Sync back the lock file to your install media
     if [ -d "$FLAKE_SRC/nixos" ]; then
-        echo "--- Updating flake.lock in source ---"
         cp -f /mnt/etc/nixos/flake.lock "$FLAKE_SRC/nixos/flake.lock"
     fi
 
-    echo "✅ installation complete."
-    read -p "Do you wish to unmount /mnt and reboot? (y/N): " reboot_confirm
+    echo "✅ Installation complete."
+    read -p "Unmount and reboot? (y/N): " reboot_confirm
     if [[ $reboot_confirm == [yY] ]]; then
-        echo "--- Unmounting and rebooting ---"
         umount -R /mnt
         reboot
     fi
