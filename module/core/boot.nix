@@ -1,20 +1,21 @@
 {
   lib,
+  pkgs,
   ...
 }:
 
 {
   boot = {
-    # CachyOs is configured on the flake.nix
-    # This is the fallback
-    # kernelPackages = pkgs.linuxPackages_latest;
+
+    # kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest;
+    kernelPackages = pkgs.linuxPackages_latest;
     loader.timeout = 0;
     loader.efi.canTouchEfiVariables = true;
     loader.systemd-boot.enable = lib.mkForce false;
 
     lanzaboote = {
       enable = true;
-      pkiBundle = "/var/lib/sbctl";
+      pkiBundle = "/etc/secureboot";
     };
 
     # TPM2 & Silent Boot

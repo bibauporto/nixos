@@ -11,9 +11,9 @@
 
     # Apps
     btop
-    wpsoffice
-    onlyoffice-desktopeditors
-    antigravity
+    #wpsoffice
+    #onlyoffice-desktopeditors
+    #antigravity
     vlc
 
     # Version Control & Cloud
@@ -21,7 +21,7 @@
     rclone
 
     # Browsers
-    microsoft-edge
+    stable.microsoft-edge
 
     # Development
     vscode

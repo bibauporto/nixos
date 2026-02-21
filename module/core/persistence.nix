@@ -11,13 +11,14 @@
       "/etc/NetworkManager/system-connections"
 
       "/var/lib/docker" # Docker
+      "/etc/secureboot" # Lanzaboot
       "/var/lib/sbctl" # Lanzaboot
       "/var/lib/flatpak" # Flatpak
     ];
     files = [
       "/etc/machine-id"
     ];
-    users.LEA.directories = [
+    users.lea.directories = [
       "Documents"
       "Downloads"
       "Code"
