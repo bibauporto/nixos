@@ -15,6 +15,7 @@
     #onlyoffice-desktopeditors
     #antigravity
     vlc
+    stable.stremio
 
     # Version Control & Cloud
     gh
