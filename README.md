@@ -5,8 +5,7 @@
 ### 0. Pre-requisites
 
 ```bash
-chmod +x install.sh
-sudo bash ./install.sh
+sudo bash ./i.sh
 ```
 
 ### 1. Manual Hardware Configuration

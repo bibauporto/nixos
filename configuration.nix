@@ -6,57 +6,33 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./module/core/filesystem.nix
+
+    # Core
     ./module/core/boot.nix
-    ./module/hardware/keyboard.nix
-    ./module/core/persistence.nix
-    ./module/desktop/desktop.nix
-    ./module/programs/packages.nix
-    ./module/hardware/kanata.nix
-    ./module/programs/rclone.nix
-    ./module/core/network.nix
+    ./module/core/cache.nix
+    ./module/core/filesystem.nix
     ./module/core/gc.nix
-    ./module/programs/nvim.nix
-    ./module/programs/alacritty.nix
+    ./module/core/network.nix
+    ./module/core/nix-ld.nix
+    ./module/core/nix.nix
+    ./module/core/persistence.nix
+    ./module/core/user.nix
+
+    # Hardware
+    ./module/hardware/graphics.nix
+    ./module/hardware/kanata.nix
+    ./module/hardware/keyboard.nix
+
+    # Desktop
     ./module/desktop/fonts.nix
-    ./module/libs/libraries.nix
+    ./module/desktop/gnome.nix
+
+    # Programs
+    ./module/programs/alacritty.nix
+    ./module/programs/nvim.nix
+    ./module/programs/packages.nix
+    ./module/programs/rclone.nix
   ];
-
-  # Nix Settings
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  nixpkgs.config.allowUnfree = true;
-
- hardware.graphics = {
-  enable = true;
-  extraPackages = with pkgs; [
-    intel-media-driver # Better for modern Raptor Lake chips
-    vpl-gpu-rt         # Video Processing Library (QuickSync)
-    libvdpau-va-gl
-  ];
-};
-
-  # User Configuration
-  users.mutableUsers = false;
-  users.users.lea = {
-    isNormalUser = true;
-    description = "LEA";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "input"
-      "uinput"
-      "docker"
-    ];
-    shell = pkgs.fish;
-    # Using your existing hashed password
-    hashedPassword = "$6$duZBUtU4Y1zhdPJ7$zaSbKAIRbGfDIRxeCzv1BjfmrGCIQiwAFdzn13BWv1fb/L2Sp2DGfe69JKynD4eLf8pB85GPLRwRT4ErIj5k41";
-  };
-
-  programs.fuse.userAllowOther = true;
 
   # System version
   system.stateVersion = "25.11";
