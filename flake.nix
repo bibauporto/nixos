@@ -56,7 +56,6 @@
           inputs.lanzaboote.nixosModules.lanzaboote
 
           ./configuration.nix
-          ./module/core/cache-settings.nix
         ];
       };
     };

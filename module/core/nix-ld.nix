@@ -1,4 +1,4 @@
-# libraries.nix
+# nix-ld.nix
 { pkgs, ... }:
 
 {
