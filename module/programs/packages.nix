@@ -11,8 +11,8 @@
 
     # Apps
     btop
-    #wpsoffice
-    #onlyoffice-desktopeditors
+    # wpsoffice
+    onlyoffice-desktopeditors
     #antigravity
     vlc
     legacy.stremio

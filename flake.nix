@@ -47,15 +47,6 @@
                     config.allowUnfree = true;
                   };
                 })
-                (final: prev: {
-                  microsoft-edge = prev.microsoft-edge.overrideAttrs (oldAttrs: rec {
-                    version = "145.0.3800.70";
-                    src = prev.fetchurl {
-                      url = "https://packages.microsoft.com/repos/edge/pool/main/m/microsoft-edge-stable/microsoft-edge-stable_${version}-1_amd64.deb";
-                      hash = "sha256-gUyh9AD1ntnZb2iLRwKLxy0PxY0Dist73oT9AC2pFQI=";
-                    };
-                  });
-                })
               ];
 
             }
