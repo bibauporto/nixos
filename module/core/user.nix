@@ -8,6 +8,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "audio"
       "video"
       "input"
       "uinput"
