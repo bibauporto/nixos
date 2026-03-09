@@ -13,7 +13,7 @@
     btop
     # wpsoffice
     onlyoffice-desktopeditors
-    #antigravity
+    antigravity
     vlc
     legacy.stremio
 

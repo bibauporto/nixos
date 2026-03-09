@@ -36,7 +36,7 @@
       ".cache"
 
       # APPs
-      # ".antigravity"
+      ".antigravity"
       ".gemini" # used for vscode gemini extension
       ".bun"
       ".vscode"
