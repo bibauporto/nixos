@@ -29,7 +29,8 @@
     opencode
     go
     bun
-    nodejs_25
+    # nodejs_25
+    stable.nodejs_24
     lazygit
     ripgrep
     fd
