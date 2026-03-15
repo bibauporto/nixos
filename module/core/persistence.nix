@@ -18,7 +18,7 @@
       "/var/lib/sbctl"
 
       # FLATPAK
-      # "/var/lib/flatpak"
+      "/var/lib/flatpak"
     ];
     files = [
       "/etc/machine-id"
@@ -42,9 +42,7 @@
       ".vscode"
 
       # FLATPAK
-      # ".var/app"
-
-      # ".gnupg"
+      ".var/app"
     ];
   };
 }
