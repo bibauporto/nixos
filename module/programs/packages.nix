@@ -39,6 +39,9 @@
     gcc
     gnumake
     cargo
+    rustc
+
+    prisma-engines_7
 
     # Required for your fish config
     fastfetch
