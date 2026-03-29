@@ -35,6 +35,8 @@
       # CACHE
       ".cache"
 
+      #Stremio
+      ".stremio-server"
       # APPs
       ".antigravity"
       ".gemini" # used for vscode gemini extension
