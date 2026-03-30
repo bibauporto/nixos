@@ -2,7 +2,7 @@
 
 {
   home-manager.users.lea =
-    { pkgs, ... }:
+    { ... }:
     {
       programs.alacritty = {
         enable = true;

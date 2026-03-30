@@ -72,7 +72,7 @@ in
   home-manager.useUserPackages = true;
 
   home-manager.users.lea =
-    { pkgs, ... }:
+    { ... }:
     {
       home.stateVersion = "25.11";
       programs.neovim = {

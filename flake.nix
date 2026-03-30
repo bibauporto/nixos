@@ -29,7 +29,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           (
-            { pkgs, ... }:
+            { ... }:
             {
               nixpkgs.hostPlatform = "x86_64-linux";
 
