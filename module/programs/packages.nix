@@ -9,8 +9,9 @@
     unzip
     openssl_3
 
-    # Apps
+    # System Apps
     btop
+
     # wpsoffice
     onlyoffice-desktopeditors
     antigravity
