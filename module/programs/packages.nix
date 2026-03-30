@@ -46,6 +46,9 @@
     # Required for your fish config
     fastfetch
 
+    #Apps
+    pcsx2
+
     # Nix
     nixfmt
     nixd
