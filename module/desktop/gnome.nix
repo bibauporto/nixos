@@ -65,7 +65,12 @@ in
   # 4. Force Wayland for crisp Electron apps
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  # 5. XDG Terminal Exec & Portals
+  # 5. QT Theme
+  qt.enable = true;
+  qt.platformTheme = "gnome";
+  qt.style = "adwaita";
+
+  # 6. XDG Terminal Exec & Portals
   xdg.terminal-exec = {
     enable = true;
     package = pkgs.xdg-terminal-exec;
@@ -82,7 +87,7 @@ in
       xdg-desktop-portal-gtk
       xdg-desktop-portal-gnome
     ];
-    config.common.default = [ "gtk" ];
+    config.common.default = [ "gnome" "gtk" ];
   };
 
   ##############################
@@ -109,6 +114,7 @@ in
     gnome-calculator
     loupe
     gnome-tweaks
+    gnome-themes-extra
     gnome-extensions-cli
     xclip
     gnomeExtensions.just-perfection
