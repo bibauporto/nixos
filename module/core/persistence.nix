@@ -11,14 +11,14 @@
       "/etc/NetworkManager/system-connections"
 
       # Docker
-      "/var/lib/docker" # Docker
+      "/var/lib/docker" 
 
       # Lanzaboot
       "/etc/secureboot"
       "/var/lib/sbctl"
 
       # FLATPAK
-      "/var/lib/flatpak"
+      # "/var/lib/flatpak"
     ];
     files = [
       "/etc/machine-id"
@@ -37,14 +37,15 @@
 
       #Stremio
       ".stremio-server"
+
       # APPs
       ".antigravity"
-      ".gemini" # used for vscode gemini extension
+      ".gemini" 
       ".bun"
       ".vscode"
 
       # FLATPAK
-      ".var/app"
+      # ".var/app"
     ];
   };
 }
