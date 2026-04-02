@@ -31,6 +31,7 @@
       ".pki"
       ".ssh"
       ".local/share"
+      ".local/state"
 
       # CACHE
       ".cache"
@@ -46,6 +47,11 @@
 
       # FLATPAK
       # ".var/app"
+      
+    ];
+
+users.lea.files = [
+      ".gitconfig"
     ];
   };
 }
