@@ -24,6 +24,7 @@
 
     # Browsers
     microsoft-edge
+    google-chrome
 
     # Development
     vscode
