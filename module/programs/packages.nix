@@ -7,19 +7,13 @@
   environment.systemPackages = with pkgs; [
     # Misc
     unzip
-    openssl_3
+    # openssl_3   #Don't know if it's required
 
     # System Apps
     btop
 
-    # wpsoffice
-    onlyoffice-desktopeditors
-    antigravity
-    vlc
-    legacy.stremio
 
-    # Version Control & Cloud
-    gh
+    # Cloud
     rclone
 
     # Browsers
@@ -28,6 +22,7 @@
 
     # Development
     vscode
+    gh
     opencode
     go
     bun
@@ -42,6 +37,7 @@
     gnumake
     cargo
     rustc
+    antigravity
 
     prisma-engines_7
 
@@ -50,6 +46,14 @@
 
     #Apps
     pcsx2
+    # wpsoffice
+    onlyoffice-desktopeditors
+    vlc
+    legacy.stremio
+
+    pinta
+
+
 
     # Nix
     nixfmt
@@ -66,6 +70,8 @@
 
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
+
+
       if status is-interactive
         fastfetch       # Show system info on startup 
       end
