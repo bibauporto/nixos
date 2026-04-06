@@ -5,21 +5,16 @@
 
 {
   environment.systemPackages = with pkgs; [
-    # Misc
-    unzip
-    # openssl_3   #Don't know if it's required
-
-    # System Apps
+    ### System Apps
     btop
 
-
-    # Cloud
+    ### Cloud
     rclone
 
-    # Browsers
+    ### Browsers
     google-chrome
 
-    # Development
+    ### Development
     vscode
     gh
     opencode
@@ -43,16 +38,17 @@
     # Required for your fish config
     fastfetch
 
-    #Apps
+    ###Apps
     pcsx2
     # wpsoffice
     onlyoffice-desktopeditors
     vlc
     legacy.stremio
-
     pinta
 
-
+    ### Misc
+    unzip
+    # bitwarden-desktop
 
     # Nix
     nixfmt
