@@ -17,7 +17,6 @@
     rclone
 
     # Browsers
-    microsoft-edge
     google-chrome
 
     # Development
