@@ -34,6 +34,7 @@
     antigravity
 
     prisma-engines_7
+    openssl_3 #prisma-engines_7 needs openssl_3
 
     # Required for your fish config
     fastfetch
