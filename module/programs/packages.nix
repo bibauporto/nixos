@@ -8,7 +8,7 @@
     ### --- System & CLI Utilities --- ###
     btop
     unzip
-    fastfetch       # Required for your fish config
+    fastfetch # Required for your fish config
     ripgrep # Recursive search
     fd # Find files
     fzf # Fuzzy finder
@@ -25,7 +25,7 @@
     gh
     opencode
     lazygit
-    
+
     # Programming Languages & Runtimes
     go
     bun
@@ -33,14 +33,14 @@
     cargo
     rustc
     luarocks
-    
+
     # Build Tools & Dependencies
     gcc
     gnumake
     tree-sitter
     antigravity
     prisma-engines_7
-    openssl_3       # prisma-engines_7 needs openssl_3
+    openssl_3 # prisma-engines_7 needs openssl_3
 
     ### --- Nix Ecosystem --- ###
     nixfmt
@@ -68,21 +68,28 @@
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
 
+      function _run
+          set_color yellow
+          echo "➜ $argv"
+          set_color normal
+          eval $argv
+      end
+
+      function nswitch; _run nixos-rebuild switch --flake .#lea-pc; end
+      function nbuild;  _run nixos-rebuild build --flake .; end
+      function ntest;   _run nixos-rebuild test --flake .; end
+      function nboot;   _run nixos-rebuild boot --flake .; end
+      function nupdate; _run nix flake update; end
+      function nlist;   _run sudo nix-env --list-generations --profile /nix/var/nix/profiles/system; end
+      function ntmp;    _run du -hx / --max-depth=5; end
+      function ndel;    _run nix-collect-garbage -d; end
+
       if status is-interactive
         fastfetch       # Show system info on startup 
       end
     '';
 
     shellAliases = {
-      nswitch = "sudo nixos-rebuild switch --flake #lea-pc";
-      nbuild = "sudo nixos-rebuild build --flake .";
-      ntest = "sudo nixos-rebuild test --flake .";
-      nboot = "sudo nixos-rebuild boot --flake .";
-      nupdate = "nix flake update";
-      nlist = "sudo nix-env --list-generations --profile /nix/var/nix/profiles/system";
-      ntmp = "sudo du -hx / --max-depth=5";
-      ndel = "sudo nix-collect-garbage -d";
-
       ls = "ls --color=auto";
       ll = "ls -lh";
     };
