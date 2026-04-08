@@ -24,6 +24,7 @@
     vscode
     gh
     opencode
+    opencode-desktop
     lazygit
 
     # Programming Languages & Runtimes
@@ -75,14 +76,14 @@
           eval $argv
       end
 
-      function nswitch; _run nixos-rebuild switch --flake .#lea-pc; end
-      function nbuild;  _run nixos-rebuild build --flake .; end
-      function ntest;   _run nixos-rebuild test --flake .; end
-      function nboot;   _run nixos-rebuild boot --flake .; end
-      function nupdate; _run nix flake update; end
+      function nswitch; _run sudo nixos-rebuild switch --flake .#lea-pc; end
+      function nbuild;  _run sudo nixos-rebuild build --flake .; end
+      function ntest;   _run sudo nixos-rebuild test --flake .; end
+      function nboot;   _run sudo nixos-rebuild boot --flake .; end
+      function nupdate; _run sudo nix flake update; end
       function nlist;   _run sudo nix-env --list-generations --profile /nix/var/nix/profiles/system; end
-      function ntmp;    _run du -hx / --max-depth=5; end
-      function ndel;    _run nix-collect-garbage -d; end
+      function ntmp;    _run sudo du -hx / --max-depth=5; end
+      function ndel;    _run sudo nix-collect-garbage -d; end
 
       if status is-interactive
         fastfetch       # Show system info on startup 
