@@ -24,7 +24,6 @@
     vscode
     gh
     opencode
-    opencode-desktop
     lazygit
 
     # Programming Languages & Runtimes
