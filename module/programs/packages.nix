@@ -5,68 +5,68 @@
 
 {
   environment.systemPackages = with pkgs; [
-    ### System Apps
+    ### --- System & CLI Utilities --- ###
     btop
+    unzip
+    fastfetch       # Required for your fish config
+    ripgrep # Recursive search
+    fd # Find files
+    fzf # Fuzzy finder
+    direnv # For auto-loading .env files
 
-    ### Cloud
+    ### --- Cloud & Storage --- ###
     rclone
 
-    ### Browsers
+    ### --- Browsers & Communication --- ###
     google-chrome
 
-    ### Development
+    ### --- Development Tools --- ###
     vscode
     gh
     opencode
+    lazygit
+    
+    # Programming Languages & Runtimes
     go
     bun
     nodejs_25
-    lazygit
-    ripgrep
-    fd
-    fzf
-    luarocks
-    tree-sitter
-    gcc
-    gnumake
     cargo
     rustc
+    luarocks
+    
+    # Build Tools & Dependencies
+    gcc
+    gnumake
+    tree-sitter
     antigravity
-
     prisma-engines_7
-    openssl_3 #prisma-engines_7 needs openssl_3
+    openssl_3       # prisma-engines_7 needs openssl_3
 
-    # Required for your fish config
-    fastfetch
-
-    ###Apps
-    pcsx2
-    # wpsoffice
-    onlyoffice-desktopeditors
-    vlc
-    legacy.stremio
-    pinta
-
-    ### Misc
-    unzip
-    # bitwarden-desktop
-
-    # Nix
+    ### --- Nix Ecosystem --- ###
     nixfmt
     nixd
-    direnv
+
+    ### --- Media & Graphics --- ###
+    vlc
+    stremio-linux-shell
+    pinta
+    pcsx2
+
+    ### --- Productivity --- ###
+    onlyoffice-desktopeditors
+    # wpsoffice
+
+    ### --- Disabled / Reference --- ###
+    # bitwarden-desktop
   ];
 
-  # Flatpak
-  # services.flatpak.enable = true;
-
+  ### --- Shell Configuration --- ###
   # All fish settings must be inside this block
   programs.fish = {
     enable = true;
 
     interactiveShellInit = ''
       set fish_greeting # Disable greeting
-
 
       if status is-interactive
         fastfetch       # Show system info on startup 
@@ -88,6 +88,7 @@
     };
   };
 
+  ### --- Version Control --- ###
   programs.git = {
     enable = true;
     config = {
@@ -100,11 +101,16 @@
     };
   };
 
-  virtualisation.docker.enable = true;
-
+  ### --- Gaming --- ###
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
   };
+
+  ### --- Virtualization & Services --- ###
+  virtualisation.docker.enable = true;
+
+  # Flatpak
+  # services.flatpak.enable = true;
 }
