@@ -19,6 +19,7 @@
 
     ### --- Browsers & Communication --- ###
     google-chrome
+    brave
 
     ### --- Development Tools --- ###
     vscode
