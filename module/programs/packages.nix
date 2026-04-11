@@ -51,6 +51,7 @@
     stremio-linux-shell
     pinta
     pcsx2
+    inkscape
 
     ### --- Productivity --- ###
     onlyoffice-desktopeditors
