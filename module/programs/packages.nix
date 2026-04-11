@@ -13,6 +13,7 @@
     fd # Find files
     fzf # Fuzzy finder
     direnv # For auto-loading .env files
+    bitwarden-desktop #bitwarden password manager 
 
     ### --- Cloud & Storage --- ###
     rclone
@@ -57,8 +58,6 @@
     onlyoffice-desktopeditors
     # wpsoffice
 
-    ### --- Disabled / Reference --- ###
-    # bitwarden-desktop
   ];
 
   ### --- Shell Configuration --- ###
