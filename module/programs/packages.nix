@@ -13,6 +13,7 @@
     fd # Find files
     fzf # Fuzzy finder
     direnv # For auto-loading .env files
+    czkawka # Multi functional app to find duplicates, empty folders, similar images etc.
 
     ### --- Cloud & Storage --- ###
     rclone
