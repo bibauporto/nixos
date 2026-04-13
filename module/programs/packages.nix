@@ -24,6 +24,7 @@
     ### --- Development Tools --- ###
     vscode
     gh
+    claude-code
     opencode
     lazygit
 
