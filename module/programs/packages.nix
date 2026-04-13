@@ -25,7 +25,6 @@
     vscode
     gh
     claude-code
-    # opencode
     lazygit
 
     # Programming Languages & Runtimes
