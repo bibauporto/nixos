@@ -7,38 +7,40 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
+    # nix-cachyos-kernel.url = "github:xddxdd/nix-cachyos-kernel/release";
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, ... }@inputs: {
-    nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        {
-          nixpkgs.hostPlatform = "x86_64-linux";
-          nixpkgs.config.allowUnfree = true;
-          nixpkgs.overlays = [
-            inputs.nix-cachyos-kernel.overlays.pinned
-            # (final: prev: {
-            #   stable = import inputs.nixpkgs-stable {
-            #     inherit (final) system;
-            #     config.allowUnfree = true;
-            #   };
-            # })
-          ];
-        }
+  outputs =
+    { nixpkgs, ... }@inputs:
+    {
+      nixosConfigurations.lea-pc = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; };
+        modules = [
+          {
+            nixpkgs.hostPlatform = "x86_64-linux";
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [
+              inputs.nix-cachyos-kernel.overlays.pinned
+              # (final: prev: {
+              #   stable = import inputs.nixpkgs-stable {
+              #     inherit (final) system;
+              #     config.allowUnfree = true;
+              #   };
+              # })
+            ];
+          }
 
-        # External Modules
-        inputs.impermanence.nixosModules.impermanence
-        inputs.lanzaboote.nixosModules.lanzaboote
-        inputs.home-manager.nixosModules.home-manager
+          # External Modules
+          inputs.impermanence.nixosModules.impermanence
+          inputs.lanzaboote.nixosModules.lanzaboote
+          inputs.home-manager.nixosModules.home-manager
 
-        ./configuration.nix
-      ];
+          ./configuration.nix
+        ];
+      };
     };
-  };
 }
