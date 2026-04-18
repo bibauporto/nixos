@@ -42,6 +42,7 @@
       # APPs
       ".antigravity"
       ".gemini" 
+      ".claude"
       ".bun"
       ".vscode"
 
